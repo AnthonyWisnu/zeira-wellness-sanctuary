@@ -9,7 +9,7 @@ if (!user || (user.peran !== 'pelatih' && user.peran !== 'admin')) {
   return Astro.redirect('/login?redirect=/pelatih');
 }
 
-const currentTab = Astro.url.searchParams.get('tab') || 'jadwal';
+const currentTab = Astro.url.searchParams.get('tab');
 const selectedSesiId = Astro.url.searchParams.get('sesiId');
 
 const actionResultVerif = Astro.getActionResult(actions.verifikasiKehadiran);
@@ -22,96 +22,305 @@ const totalSesi = jadwalList.length;
 const totalPesertaSemua = jadwalList.reduce((acc, s) => acc + (s.tb_reservasi_sesi?.length || 0), 0);
 const selesaiCount = jadwalList.filter((s) => s.status_sesi === 'selesai').length;
 
-// Kelas yang dipilih untuk Tab Absensi
+// Menentukan mode tampilan: Jika sesiId diberikan atau tab=absensi diberikan
+const isAttendanceMode = Boolean(selectedSesiId || currentTab === 'absensi');
 const activeSesi = selectedSesiId
-  ? (jadwalList.find((s) => s.id === selectedSesiId) || jadwalList[0])
-  : jadwalList[0];
+  ? jadwalList.find((s) => s.id === selectedSesiId)
+  : (isAttendanceMode ? jadwalList[0] : null);
 
 const pesertaActive = activeSesi?.tb_reservasi_sesi || [];
 const hadirCount = pesertaActive.filter((p: any) => p.status_reservasi === 'hadir').length;
 const mangkirCount = pesertaActive.filter((p: any) => p.status_reservasi === 'tidak_hadir').length;
 const belumDiabsenCount = pesertaActive.filter((p: any) => p.status_reservasi === 'dipesan').length;
+
+function formatJamMenit(d: Date | string): string {
+  const date = typeof d === 'string' ? new Date(d) : d;
+  return date.toLocaleTimeString('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Makassar',
+  }).replace('.', ':');
+}
+
+function formatTanggalLengkap(d: Date | string): string {
+  const date = typeof d === 'string' ? new Date(d) : d;
+  return date.toLocaleDateString('id-ID', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'Asia/Makassar',
+  });
+}
 ---
 
-<DashboardLayout title="Portal Instruktur" activeMenu={currentTab === 'absensi' ? 'absensi' : 'jadwal'}>
+<DashboardLayout title="Portal Instruktur" activeMenu="jadwal">
   <!-- NOTIFIKASI HASIL AKSI -->
   {(actionResultVerif?.error || actionResultSelesai?.error) && (
-    <div style="background: #FDEDED; border: 1px solid #F5C6CB; color: #721C24; padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;">
+    <div class="feedback-banner feedback-banner--error">
       <Icon name="warning-circle" size="1.2rem" />
       <span>{actionResultVerif?.error?.message || actionResultSelesai?.error?.message}</span>
     </div>
   )}
   {(actionResultVerif?.data?.success || actionResultSelesai?.data?.success) && (
-    <div style="background: #EDF7EE; border: 1px solid #C8E6C9; color: #1B5E20; padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;">
+    <div class="feedback-banner feedback-banner--success">
       <Icon name="check-circle" size="1.2rem" />
       <span>Status kehadiran peserta berhasil diverifikasi secara instan.</span>
     </div>
   )}
 
   <!-- ========================================================================= -->
-  <!-- TAB 1: JADWAL MENGAJAR HARI INI & MENDATANG                               -->
+  <!-- MODE 1: LEMBAR PRESENSI FOKUS PER SESI KELAS                              -->
   <!-- ========================================================================= -->
-  {currentTab === 'jadwal' && (
-    <div>
-      <div style="margin-bottom: 2rem;">
-        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-primary); font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">
-          PORTAL INSTRUKTUR • AGENDA MENGAJAR
+  {isAttendanceMode && activeSesi ? (
+    <div class="attendance-page">
+      <!-- TOMBOL KEMBALI BERSIH & BEBAS CLUTTER -->
+      <div class="back-nav-bar">
+        <a href="/pelatih" class="btn-back">
+          <Icon name="arrow-left" size="1.1rem" />
+          <span>Kembali ke Jadwal Mengajar</span>
+        </a>
+      </div>
+
+      <div class="page-header">
+        <div class="page-eyebrow">PORTAL INSTRUKTUR • VERIFIKASI PRESENSI FISIK</div>
+        <h1 class="page-title">Lembar Presensi Kelas</h1>
+        <p class="page-subtitle">
+          Verifikasi kehadiran fisik peserta di pintu studio secara real-time. Data tercatat sah di bawah nama instruktur.
+        </p>
+      </div>
+
+      <!-- PAPAN INSPEKSI SESI (ATELIER SPEC CARD) -->
+      <div class="spec-card">
+        <div class="spec-card__top">
+          <div class="spec-card__tags">
+            <span class="pill-tag pill-tag--brass">
+              {activeSesi.tb_kategori_layanan.nama_kategori}
+            </span>
+            {activeSesi.status_sesi === 'selesai' ? (
+              <span class="pill-tag pill-tag--green">KELAS TELAH SELESAI</span>
+            ) : (
+              <span class="pill-tag pill-tag--brass" style="background: rgba(184, 150, 106, 0.12);">
+                SESI AKTIF
+              </span>
+            )}
+          </div>
+
+          <div>
+            {activeSesi.status_sesi !== 'selesai' && (
+              <form method="POST" action={actions.selesaikanSesi} onsubmit="return confirm('Tandai sesi kelas ini telah selesai?');" style="margin: 0;">
+                <input type="hidden" name="jadwalId" value={activeSesi.id} />
+                <button type="submit" class="btn-primary btn-primary--sm">
+                  Selesaikan Kelas
+                </button>
+              </form>
+            )}
+          </div>
         </div>
-        <h1 style="font-family: var(--font-display); font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin: 4px 0;">
-          Jadwal Sesi Mengajar Anda
-        </h1>
-        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
-          Pantau seluruh agenda kelas studio yang Anda bimbing hari ini dan mendatang, alokasi ruangan, dan kuota peserta.
+
+        <h2 class="spec-card__title">{activeSesi.judul_sesi}</h2>
+
+        <!-- GRID DETAIL SPESIFIKASI KELAS (PER-ROW JELAS & RAPI) -->
+        <div class="spec-rows-container">
+          <div class="spec-row">
+            <div class="spec-row__label">WAKTU PELAKSANAAN</div>
+            <div class="spec-row__value">
+              {formatTanggalLengkap(activeSesi.waktu_mulai)} • {formatJamMenit(activeSesi.waktu_mulai)} – {formatJamMenit(activeSesi.waktu_selesai)} WITA
+            </div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-row__label">RUANGAN & LOKASI</div>
+            <div class="spec-row__value">
+              {activeSesi.tb_ruangan.nama_ruangan} ({activeSesi.tb_ruangan.lokasi})
+            </div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-row__label">KAPASITAS STUDIO</div>
+            <div class="spec-row__value mono-text">
+              {activeSesi.jumlah_terisi} / {activeSesi.kapasitas_maksimal} Kursi Terisi ({activeSesi.kapasitas_maksimal - activeSesi.jumlah_terisi} kursi tersisa)
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 TALLY METRIK KEHADIRAN SESI INI -->
+        <div class="tally-bar">
+          <div class="tally-item">
+            <div class="tally-label">Total Terdaftar</div>
+            <div class="tally-num">{pesertaActive.length}</div>
+          </div>
+          <div class="tally-item tally-item--green">
+            <div class="tally-label">Hadir di Studio</div>
+            <div class="tally-num">{hadirCount}</div>
+          </div>
+          <div class="tally-item tally-item--red">
+            <div class="tally-label">Tidak Hadir (Mangkir)</div>
+            <div class="tally-num">{mangkirCount}</div>
+          </div>
+          <div class="tally-item tally-item--brass">
+            <div class="tally-label">Menunggu Absen</div>
+            <div class="tally-num">{belumDiabsenCount}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEMBAR DAFTAR PESERTA -->
+      <div class="ledger-card">
+        <div class="ledger-header">
+          <div class="ledger-header__title">
+            DAFTAR PESERTA TERDAFTAR ({pesertaActive.length} ORANG)
+          </div>
+          <div class="ledger-header__badge">
+            Trainer Verified Attendance
+          </div>
+        </div>
+
+        {pesertaActive.length === 0 ? (
+          <div class="ledger-empty">
+            <Icon name="ticket" size="2.5rem" style="color: var(--text-subtle); margin-bottom: 0.75rem;" />
+            <div style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Belum Ada Peserta Terdaftar</div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+              Belum ada pelanggan yang memesan tiket sah untuk sesi kelas studio ini.
+            </p>
+          </div>
+        ) : (
+          <div class="ledger-list">
+            {pesertaActive.map((p: any, idx: number) => {
+              const isPresent = p.status_reservasi === 'hadir';
+              const isAbsent = p.status_reservasi === 'tidak_hadir';
+              const pelanggan = p.tb_pengguna || p.tb_pengguna_tb_reservasi_sesi_id_pelangganTotb_pengguna;
+              const namaPelanggan = pelanggan?.nama_lengkap || 'Peserta Terdaftar';
+              const emailPelanggan = pelanggan?.email || '';
+
+              return (
+                <div class="ledger-row">
+                  <div class="ledger-row__user">
+                    <div class="attendee-avatar">
+                      {namaPelanggan.charAt(0)}
+                    </div>
+                    <div class="attendee-meta">
+                      <div class="attendee-name">
+                        {idx + 1}. {namaPelanggan}
+                      </div>
+                      <div class="attendee-specs">
+                        <span class="mono-tag">{p.kode_reservasi}</span>
+                        {emailPelanggan && (
+                          <span class="attendee-email">{emailPelanggan}</span>
+                        )}
+                        <span class="attendee-type">{p.tipe_tarif === 'member' ? 'Member Aktif' : 'Drop-in Reguler'}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="ledger-row__actions">
+                    <!-- STATUS BADGE -->
+                    {isPresent && (
+                      <span class="pill-tag pill-tag--green">
+                        ✓ HADIR DI STUDIO
+                      </span>
+                    )}
+                    {isAbsent && (
+                      <span class="pill-tag pill-tag--red">
+                        ✗ TIDAK HADIR
+                      </span>
+                    )}
+                    {p.status_reservasi === 'dipesan' && (
+                      <span class="pill-tag pill-tag--neutral">
+                        BELUM DIABSEN
+                      </span>
+                    )}
+
+                    <!-- TOMBOL VERIFIKASI KEHADIRAN -->
+                    <div class="action-btn-group">
+                      <form method="POST" action={actions.verifikasiKehadiran} style="margin: 0;">
+                        <input type="hidden" name="reservasiId" value={p.id} />
+                        <input type="hidden" name="status" value="hadir" />
+                        <button
+                          type="submit"
+                          class={`btn-action btn-action--present ${isPresent ? 'btn-action--present-active' : ''}`}
+                          title="Tandai Hadir di Studio"
+                        >
+                          Hadir
+                        </button>
+                      </form>
+
+                      <form method="POST" action={actions.verifikasiKehadiran} style="margin: 0;">
+                        <input type="hidden" name="reservasiId" value={p.id} />
+                        <input type="hidden" name="status" value="tidak_hadir" />
+                        <button
+                          type="submit"
+                          class={`btn-action btn-action--absent ${isAbsent ? 'btn-action--absent-active' : ''}`}
+                          title="Tandai Tidak Hadir (Mangkir)"
+                        >
+                          Mangkir
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  ) : isAttendanceMode && !activeSesi ? (
+    <div class="surface-card" style="padding: 3rem; text-align: center;">
+      <Icon name="clipboard-text" size="2.5rem" style="color: var(--text-subtle); margin-bottom: 1rem;" />
+      <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; margin: 0 0 6px;">
+        Sesi Kelas Tidak Ditemukan
+      </h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0 0 1.5rem;">
+        Sesi kelas yang Anda minta tidak terdaftar atau telah diarsipkan.
+      </p>
+      <a href="/pelatih" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+        <Icon name="arrow-left" size="1.1rem" />
+        <span>Kembali ke Jadwal Mengajar</span>
+      </a>
+    </div>
+  ) : (
+    <div>
+      <div class="page-header">
+        <div class="page-eyebrow">PORTAL INSTRUKTUR • AGENDA MENGAJAR</div>
+        <h1 class="page-title">Jadwal Sesi Mengajar Anda</h1>
+        <p class="page-subtitle">
+          Pantau seluruh agenda kelas studio yang Anda bimbing, alokasi ruangan, dan kuota peserta.
         </p>
       </div>
 
       <!-- 4 KPI CARDS INSTRUKTUR -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-        <div class="surface-card" style="padding: 1.25rem;">
-          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">
-            TOTAL SESI KELAS
-          </div>
-          <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: var(--color-primary); margin: 4px 0;">
-            {totalSesi}
-          </div>
-          <div style="font-size: 0.75rem; color: var(--text-subtle);">Sesi terdaftar aktif</div>
+      <div class="kpi-grid">
+        <div class="surface-card kpi-card">
+          <div class="kpi-label">TOTAL SESI KELAS</div>
+          <div class="kpi-value">{totalSesi}</div>
+          <div class="kpi-subtext">Sesi terdaftar aktif</div>
         </div>
 
-        <div class="surface-card" style="padding: 1.25rem;">
-          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">
-            TOTAL PESERTA DIAJAR
-          </div>
-          <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: var(--color-primary); margin: 4px 0;">
-            {totalPesertaSemua}
-          </div>
-          <div style="font-size: 0.75rem; color: var(--text-subtle);">Tiket terkonfirmasi sah</div>
+        <div class="surface-card kpi-card">
+          <div class="kpi-label">TOTAL PESERTA DIAJAR</div>
+          <div class="kpi-value">{totalPesertaSemua}</div>
+          <div class="kpi-subtext">Tiket terkonfirmasi sah</div>
         </div>
 
-        <div class="surface-card" style="padding: 1.25rem;">
-          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">
-            SESI DISELESAIKAN
-          </div>
-          <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: var(--color-primary); margin: 4px 0;">
-            {selesaiCount} / {totalSesi}
-          </div>
-          <div style="font-size: 0.75rem; color: var(--text-subtle);">Kelas tuntas terlaksana</div>
+        <div class="surface-card kpi-card">
+          <div class="kpi-label">SESI DISELESAIKAN</div>
+          <div class="kpi-value">{selesaiCount} / {totalSesi}</div>
+          <div class="kpi-subtext">Kelas tuntas terlaksana</div>
         </div>
 
-        <div class="surface-card" style="padding: 1.25rem;">
-          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">
-            STATUS PENUGASAN
-          </div>
-          <div style="font-family: var(--font-mono); font-size: 1.1rem; font-weight: 800; color: #1B5E20; margin: 8px 0;">
-            ● Aktif Bertugas
-          </div>
-          <div style="font-size: 0.75rem; color: var(--text-subtle);">Sesi studio siap dipandu</div>
+        <div class="surface-card kpi-card">
+          <div class="kpi-label">STATUS PENUGASAN</div>
+          <div class="kpi-value kpi-value--active">● Aktif Bertugas</div>
+          <div class="kpi-subtext">Studio siap dipandu</div>
         </div>
       </div>
 
       <!-- DAFTAR KARTU JADWAL MENGAJAR -->
-      <h2 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; margin: 0 0 1.25rem; color: var(--text-main);">
-        Daftar Sesi Mengajar ({jadwalList.length})
-      </h2>
+      <div class="section-heading">
+        <h2 class="section-title">
+          Daftar Sesi Mengajar ({jadwalList.length})
+        </h2>
+      </div>
 
       {jadwalList.length === 0 ? (
         <div class="surface-card" style="padding: 3rem; text-align: center;">
@@ -120,296 +329,570 @@ const belumDiabsenCount = pesertaActive.filter((p: any) => p.status_reservasi ==
             Tidak Ada Sesi Mengajar
           </h3>
           <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
-            Anda belum memiliki jadwal mengajar aktif untuk hari ini.
+            Anda belum memiliki jadwal mengajar aktif untuk saat ini.
           </p>
         </div>
       ) : (
-        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div class="sesi-list">
           {jadwalList.map((sesi) => {
-            const startStr = new Date(sesi.waktu_mulai).toLocaleDateString('id-ID', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-            });
-            const timeStr = `${new Date(sesi.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} – ${new Date(sesi.waktu_selesai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WITA`;
+            const startDayStr = formatTanggalLengkap(sesi.waktu_mulai);
+            const timeRangeStr = `${formatJamMenit(sesi.waktu_mulai)} – ${formatJamMenit(sesi.waktu_selesai)} WITA`;
             const pesertaCount = sesi.tb_reservasi_sesi?.length || 0;
             const isCompleted = sesi.status_sesi === 'selesai';
+            const sisaKursi = sesi.kapasitas_maksimal - sesi.jumlah_terisi;
 
             return (
-              <div class="surface-card" style="padding: 1.5rem 1.75rem;">
-                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem;">
-                  <div style="flex: 1; min-width: 280px;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                      <span class="pill-tag pill-tag--brass" style="font-size: 0.72rem;">
-                        {sesi.tb_kategori_layanan.nama_kategori}
-                      </span>
-                      <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-subtle);">
-                        {sesi.tb_ruangan.nama_ruangan} ({sesi.tb_ruangan.lokasi})
-                      </span>
-                      {isCompleted && (
-                        <span class="pill-tag pill-tag--green" style="font-size: 0.68rem;">
-                          SELESAI
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; color: var(--text-main); margin: 0 0 6px;">
-                      {sesi.judul_sesi}
-                    </h3>
-
-                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text-muted);">
-                      <span>
-                        Waktu: <strong>{startStr}, {timeStr}</strong>
-                      </span>
-                      <span>•</span>
-                      <span style="font-family: var(--font-mono); font-weight: 700; color: var(--color-primary);">
-                        {sesi.jumlah_terisi} / {sesi.kapasitas_maksimal} Kursi Terisi
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- AKSI KELAS -->
-                  <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
-                    <a
-                      href={`/pelatih?tab=absensi&sesiId=${sesi.id}`}
-                      class="btn-primary"
-                      style="padding: 9px 16px; font-size: 0.82rem; text-decoration: none; display: flex; align-items: center; gap: 6px;"
-                    >
-                      <Icon name="clipboard-text" size="1.1rem" />
-                      <span>Buka Lembar Absensi ({pesertaCount})</span>
-                    </a>
-
-                    {!isCompleted && (
-                      <form method="POST" action={actions.selesaikanSesi} onsubmit="return confirm('Tandai sesi kelas ini telah selesai?');" style="margin: 0;">
-                        <input type="hidden" name="jadwalId" value={sesi.id} />
-                        <button type="submit" class="btn-secondary" style="padding: 9px 14px; font-size: 0.82rem;" title="Tandai Kelas Selesai">
-                          Selesaikan
-                        </button>
-                      </form>
+              <div class="sesi-item-card surface-card">
+                <div class="sesi-item-card__main">
+                  <div class="sesi-item-card__tags">
+                    <span class="pill-tag pill-tag--brass">
+                      {sesi.tb_kategori_layanan.nama_kategori}
+                    </span>
+                    {isCompleted ? (
+                      <span class="pill-tag pill-tag--green">SELESAI</span>
+                    ) : (
+                      <span class="pill-tag pill-tag--neutral">TERJADWAL</span>
                     )}
                   </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  )}
 
-  <!-- ========================================================================= -->
-  <!-- TAB 2: LEMBAR ABSENSI PESERTA (STUDIO CHECK-IN)                           -->
-  <!-- ========================================================================= -->
-  {currentTab === 'absensi' && (
-    <div>
-      <div style="margin-bottom: 2rem;">
-        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-primary); font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">
-          PORTAL INSTRUKTUR • VERIFIKASI KEHADIRAN STUDIO
-        </div>
-        <h1 style="font-family: var(--font-display); font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin: 4px 0;">
-          Lembar Presensi Peserta Kelas
-        </h1>
-        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
-          Verifikasi kehadiran fisik peserta di pintu studio secara real-time. Catat kehadiran atau ketidakhadiran dengan 1 kali klik.
-        </p>
-      </div>
+                  <h3 class="sesi-item-card__title">
+                    {sesi.judul_sesi}
+                  </h3>
 
-      <!-- KELAS SWITCHER TABS (Jika instruktur mengajar lebih dari 1 kelas) -->
-      {jadwalList.length > 1 && (
-        <div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 1.5rem; padding-bottom: 4px;">
-          {jadwalList.map((sesi) => {
-            const isActive = activeSesi && activeSesi.id === sesi.id;
-            const timeStr = new Date(sesi.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-            return (
-              <a
-                href={`/pelatih?tab=absensi&sesiId=${sesi.id}`}
-                class="surface-card"
-                style={`padding: 8px 16px; font-size: 0.82rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 700; white-space: nowrap; display: flex; align-items: center; gap: 6px; ${
-                  isActive
-                    ? 'background: var(--color-primary); color: #FFF; border-color: var(--color-primary);'
-                    : 'color: var(--text-main);'
-                }`}
-              >
-                <span>{sesi.judul_sesi} ({timeStr} WITA)</span>
-                <span style={`font-family: var(--font-mono); font-size: 0.72rem; padding: 2px 6px; border-radius: 10px; ${isActive ? 'background: rgba(255,255,255,0.25);' : 'background: #FAF8F5;'}`}>
-                  {sesi.tb_reservasi_sesi?.length || 0}
-                </span>
-              </a>
-            );
-          })}
-        </div>
-      )}
-
-      {!activeSesi ? (
-        <div class="surface-card" style="padding: 3rem; text-align: center;">
-          <Icon name="clipboard-text" size="2.5rem" style="color: var(--text-subtle); margin-bottom: 1rem;" />
-          <h3 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; margin: 0 0 6px;">
-            Belum Ada Kelas yang Dipilih
-          </h3>
-          <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
-            Silakan pilih sesi kelas dari tab Jadwal Mengajar untuk membuka lembar presensi.
-          </p>
-        </div>
-      ) : (
-        <div>
-          <!-- KARTU HEADER SESI YANG SEDANG DIABSEN -->
-          <div class="surface-card" style="padding: 1.5rem 1.75rem; border: 1.5px solid var(--color-brass); margin-bottom: 1.5rem;">
-            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
-              <div>
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                  <span class="pill-tag pill-tag--brass" style="font-size: 0.72rem;">
-                    {activeSesi.tb_kategori_layanan.nama_kategori}
-                  </span>
-                  <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-subtle);">
-                    {activeSesi.tb_ruangan.nama_ruangan} ({activeSesi.tb_ruangan.lokasi})
-                  </span>
-                </div>
-                <h2 style="font-family: var(--font-display); font-size: 1.45rem; font-weight: 800; color: var(--text-main); margin: 0 0 4px;">
-                  {activeSesi.judul_sesi}
-                </h2>
-                <div style="font-size: 0.85rem; color: var(--text-muted);">
-                  Waktu: <strong>{new Date(activeSesi.waktu_mulai).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })}, {new Date(activeSesi.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} – {new Date(activeSesi.waktu_selesai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WITA</strong>
-                </div>
-              </div>
-
-              <div>
-                {activeSesi.status_sesi === 'selesai' ? (
-                  <span class="pill-tag pill-tag--green">KELAS TELAH SELESAI</span>
-                ) : (
-                  <form method="POST" action={actions.selesaikanSesi} onsubmit="return confirm('Tandai sesi kelas ini telah selesai?');" style="margin: 0;">
-                    <input type="hidden" name="jadwalId" value={activeSesi.id} />
-                    <button type="submit" class="btn-primary" style="padding: 8px 14px; font-size: 0.8rem;">
-                      Selesaikan Kelas
-                    </button>
-                  </form>
-                )}
-              </div>
-            </div>
-
-            <!-- 4 METRIK KEHADIRAN SESI INI -->
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #FAF8F5; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-hairline);">
-              <div style="text-align: center;">
-                <div style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-muted); text-transform: uppercase;">Total Terdaftar</div>
-                <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: var(--text-main);">{pesertaActive.length}</div>
-              </div>
-              <div style="text-align: center;">
-                <div style="font-size: 0.7rem; font-family: var(--font-mono); color: #1B5E20; text-transform: uppercase;">Hadir di Studio</div>
-                <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: #1B5E20;">{hadirCount}</div>
-              </div>
-              <div style="text-align: center;">
-                <div style="font-size: 0.7rem; font-family: var(--font-mono); color: #721C24; text-transform: uppercase;">Tidak Hadir</div>
-                <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: #721C24;">{mangkirCount}</div>
-              </div>
-              <div style="text-align: center;">
-                <div style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--color-brass-dark); text-transform: uppercase;">Menunggu Absen</div>
-                <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: var(--color-brass-dark);">{belumDiabsenCount}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- LEMBAR DAFTAR PESERTA -->
-          <div class="surface-card" style="padding: 0; overflow: hidden;">
-            <div style="background: #FAF8F5; padding: 12px 18px; border-bottom: 1px solid var(--border-hairline); display: flex; justify-content: space-between; align-items: center;">
-              <div style="font-family: var(--font-mono); font-size: 0.75rem; font-weight: 800; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.05em;">
-                DAFTAR PESERTA TERDAFTAR ({pesertaActive.length} ORANG)
-              </div>
-              <div style="font-size: 0.75rem; color: var(--text-subtle);">
-                Trainer Verified Attendance
-              </div>
-            </div>
-
-            {pesertaActive.length === 0 ? (
-              <div style="padding: 3rem; text-align: center; color: var(--text-muted); font-size: 0.88rem;">
-                Belum ada peserta yang memesan tiket sah untuk sesi ini.
-              </div>
-            ) : (
-              <div style="display: flex; flex-direction: column;">
-                {pesertaActive.map((p: any, idx: number) => {
-                  const isPresent = p.status_reservasi === 'hadir';
-                  const isAbsent = p.status_reservasi === 'tidak_hadir';
-                  const pelanggan = p.tb_pengguna || p.tb_pengguna_tb_reservasi_sesi_id_pelangganTotb_pengguna;
-                  const namaPelanggan = pelanggan?.nama_lengkap || 'Peserta Terdaftar';
-                  const emailPelanggan = pelanggan?.email || '';
-
-                  return (
-                    <div style="padding: 14px 18px; border-bottom: 1px solid var(--border-hairline); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;">
-                      <div style="display: flex; align-items: center; gap: 14px;">
-                        <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--color-primary); color: #FFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.88rem; flex-shrink: 0;">
-                          {namaPelanggan.charAt(0)}
-                        </div>
-                        <div>
-                          <div style="font-weight: 700; font-size: 0.98rem; color: var(--text-main);">
-                            {idx + 1}. {namaPelanggan}
-                          </div>
-                          <div style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
-                            Tiket: <strong>{p.kode_reservasi}</strong> {emailPelanggan ? `• ${emailPelanggan}` : ''}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div style="display: flex; align-items: center; gap: 12px;">
-                        <!-- STATUS BADGE -->
-                        {isPresent && (
-                          <span class="pill-tag pill-tag--green" style="font-size: 0.75rem; padding: 5px 10px;">
-                            ✓ HADIR DI STUDIO
-                          </span>
-                        )}
-                        {isAbsent && (
-                          <span style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; background: #FDEDED; color: #721C24; padding: 5px 10px; border-radius: var(--radius-sm); border: 1px solid #F5C6CB;">
-                            ✗ TIDAK HADIR (MANGKIR)
-                          </span>
-                        )}
-                        {p.status_reservasi === 'dipesan' && (
-                          <span style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; background: #FAF8F5; color: var(--color-primary); padding: 5px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-hairline);">
-                            BELUM DIABSEN
-                          </span>
-                        )}
-
-                        <!-- TOMBOL VERIFIKASI KEHADIRAN -->
-                        <div style="display: flex; gap: 6px;">
-                          <form method="POST" action={actions.verifikasiKehadiran} style="margin: 0;">
-                            <input type="hidden" name="reservasiId" value={p.id} />
-                            <input type="hidden" name="status" value="hadir" />
-                            <button
-                              type="submit"
-                              class="btn-secondary"
-                              style={`padding: 6px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer; ${
-                                isPresent
-                                  ? 'background: #2E7D32; color: #FFF; border-color: #2E7D32;'
-                                  : 'background: #EDF7EE; color: #1B5E20; border-color: #C8E6C9;'
-                              }`}
-                              title="Tandai Hadir"
-                            >
-                              Hadir
-                            </button>
-                          </form>
-
-                          <form method="POST" action={actions.verifikasiKehadiran} style="margin: 0;">
-                            <input type="hidden" name="reservasiId" value={p.id} />
-                            <input type="hidden" name="status" value="tidak_hadir" />
-                            <button
-                              type="submit"
-                              class="btn-secondary"
-                              style={`padding: 6px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer; ${
-                                isAbsent
-                                  ? 'background: #C62828; color: #FFF; border-color: #C62828;'
-                                  : 'background: #FDEDED; color: #721C24; border-color: #F5C6CB;'
-                              }`}
-                              title="Tandai Mangkir"
-                            >
-                              Mangkir
-                            </button>
-                          </form>
-                        </div>
+                  <!-- PER-ROW STRUCTURED SPEC SHEET (NO INLINE BULLETS) -->
+                  <div class="sesi-spec-grid">
+                    <div class="sesi-spec-row">
+                      <div class="sesi-spec-key">WAKTU SESI</div>
+                      <div class="sesi-spec-val">
+                        <strong>{startDayStr}</strong>, {timeRangeStr}
                       </div>
                     </div>
-                  );
-                })}
+
+                    <div class="sesi-spec-row">
+                      <div class="sesi-spec-key">RUANGAN</div>
+                      <div class="sesi-spec-val">
+                        {sesi.tb_ruangan.nama_ruangan} ({sesi.tb_ruangan.lokasi})
+                      </div>
+                    </div>
+
+                    <div class="sesi-spec-row">
+                      <div class="sesi-spec-key">KUOTA KELAS</div>
+                      <div class="sesi-spec-val mono-val">
+                        <strong>{sesi.jumlah_terisi} / {sesi.kapasitas_maksimal} Kursi Terisi</strong>
+                        <span class="sesi-spec-sub">({sisaKursi > 0 ? `${sisaKursi} kursi tersisa` : 'Penuh'})</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- AKSI KELAS -->
+                <div class="sesi-item-card__actions">
+                  <a
+                    href={`/pelatih?sesiId=${sesi.id}`}
+                    class="btn-primary"
+                    style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; white-space: nowrap;"
+                  >
+                    <Icon name="clipboard-text" size="1.1rem" />
+                    <span>Buka Lembar Presensi ({pesertaCount})</span>
+                  </a>
+
+                  {!isCompleted && (
+                    <form method="POST" action={actions.selesaikanSesi} onsubmit="return confirm('Tandai sesi kelas ini telah selesai?');" style="margin: 0; width: 100%;">
+                      <input type="hidden" name="jadwalId" value={sesi.id} />
+                      <button type="submit" class="btn-secondary" style="width: 100%; justify-content: center;" title="Tandai Kelas Selesai">
+                        Selesaikan Kelas
+                      </button>
+                    </form>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
+            );
+          })}
         </div>
       )}
     </div>
   )}
 </DashboardLayout>
+
+<style>
+  /* BREADCRUMB & BACK BUTTON */
+  .back-nav-bar {
+    margin-bottom: 1.25rem;
+  }
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    background: #FAF8F5;
+    border: 1px solid var(--border-hairline);
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+  .btn-back:hover {
+    background: #F4EFEA;
+    border-color: var(--color-brass);
+    color: var(--color-primary-dark);
+  }
+
+  /* HEADERS */
+  .page-header {
+    margin-bottom: 1.75rem;
+  }
+  .page-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-primary);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .page-title {
+    font-family: var(--font-display);
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 4px 0;
+  }
+  .page-subtitle {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin: 0;
+    max-width: 650px;
+    line-height: 1.5;
+  }
+
+  /* FEEDBACK NOTIFICATION */
+  .feedback-banner {
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .feedback-banner--error {
+    background: #FDEDED;
+    border: 1px solid #F5C6CB;
+    color: #721C24;
+  }
+  .feedback-banner--success {
+    background: #EDF7EE;
+    border: 1px solid #C8E6C9;
+    color: #1B5E20;
+  }
+
+  /* KPI CARDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .kpi-card {
+    padding: 1.25rem;
+  }
+  .kpi-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .kpi-value {
+    font-family: var(--font-mono);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    margin: 4px 0;
+  }
+  .kpi-value--active {
+    font-size: 1.1rem;
+    color: #1B5E20;
+    margin: 10px 0 6px;
+  }
+  .kpi-subtext {
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+  }
+
+  /* SECTION HEADING */
+  .section-heading {
+    margin-bottom: 1.25rem;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin: 0;
+    color: var(--text-main);
+  }
+
+  /* SESI LIST & CARDS */
+  .sesi-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .sesi-item-card {
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .sesi-item-card__main {
+    flex: 1;
+    min-width: 300px;
+  }
+  .sesi-item-card__tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .sesi-item-card__title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 0 0 1rem;
+  }
+  .sesi-item-card__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    min-width: 230px;
+    flex-shrink: 0;
+  }
+
+  /* SPEC ROW PATTERN (CLEAN TABLE-LIKE DISCIPLINE) */
+  .sesi-spec-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: #FAF8F5;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+  }
+  .sesi-spec-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    align-items: baseline;
+    font-size: 0.82rem;
+    gap: 8px;
+  }
+  .sesi-spec-key {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .sesi-spec-val {
+    color: var(--text-main);
+  }
+  .sesi-spec-val.mono-val {
+    font-family: var(--font-mono);
+  }
+  .sesi-spec-sub {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    margin-left: 6px;
+  }
+
+  /* PAPAN INSPEKSI SESI (ATELIER SPEC CARD) */
+  .spec-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--color-brass);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .spec-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .spec-card__tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .spec-card__title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 0 0 1rem;
+  }
+  .btn-primary--sm {
+    padding: 7px 14px;
+    font-size: 0.8rem;
+  }
+
+  .spec-rows-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: #FAF8F5;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 1.25rem;
+  }
+  .spec-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    align-items: baseline;
+    font-size: 0.84rem;
+    gap: 12px;
+  }
+  .spec-row__label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .spec-row__value {
+    color: var(--text-main);
+  }
+  .mono-text {
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+
+  /* TALLY BAR METRIKS */
+  .tally-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    background: #FAF8F5;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-hairline);
+  }
+  .tally-item {
+    text-align: center;
+  }
+  .tally-label {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+  }
+  .tally-num {
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  .tally-item--green .tally-label,
+  .tally-item--green .tally-num {
+    color: #1B5E20;
+  }
+  .tally-item--red .tally-label,
+  .tally-item--red .tally-num {
+    color: #8C1D18;
+  }
+  .tally-item--brass .tally-label,
+  .tally-item--brass .tally-num {
+    color: var(--color-primary);
+  }
+
+  /* LEDGER CARD (PRESENSI LIST) */
+  .ledger-card {
+    background: #FFFFFF;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .ledger-header {
+    background: #FAF8F5;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border-hairline);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .ledger-header__title {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .ledger-header__badge {
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+  }
+  .ledger-empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+  .ledger-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .ledger-row {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-hairline);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .ledger-row:last-child {
+    border-bottom: none;
+  }
+  .ledger-row__user {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .attendee-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.88rem;
+    flex-shrink: 0;
+  }
+  .attendee-meta {
+    display: flex;
+    flex-direction: column;
+  }
+  .attendee-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-main);
+  }
+  .attendee-specs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  .mono-tag {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--text-main);
+    background: #F4EFEA;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+  }
+  .attendee-email {
+    color: var(--text-muted);
+  }
+  .attendee-type {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .ledger-row__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .action-btn-group {
+    display: flex;
+    gap: 6px;
+  }
+  .btn-action {
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s ease;
+  }
+  .btn-action--present {
+    background: #EDF7EE;
+    color: #1B5E20;
+    border: 1px solid #C8E6C9;
+  }
+  .btn-action--present:hover,
+  .btn-action--present-active {
+    background: #2E7D32;
+    color: #FFF;
+    border-color: #2E7D32;
+  }
+  .btn-action--absent {
+    background: #FDEDED;
+    color: #721C24;
+    border: 1px solid #F5C6CB;
+  }
+  .btn-action--absent:hover,
+  .btn-action--absent-active {
+    background: #C62828;
+    color: #FFF;
+    border-color: #C62828;
+  }
+
+  /* PILL TAGS */
+  .pill-tag--neutral {
+    background: #FAF8F5;
+    color: var(--color-primary);
+    border: 1px solid var(--border-hairline);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+  .pill-tag--red {
+    background: #FDEDED;
+    color: #721C24;
+    border: 1px solid #F5C6CB;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  @media (max-width: 640px) {
+    .sesi-spec-row,
+    .spec-row {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+    .tally-bar {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .ledger-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .ledger-row__actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+</style>

@@ -114,13 +114,9 @@ const dashboardHome = isRoleAdmin ? '/admin' : isRolePelatih ? '/pelatih' : '/ri
 
         {isRolePelatih && (
           <div class="nav-section-title">PORTAL INSTRUKTUR</div>
-          <a href="/pelatih?tab=jadwal" class={`nav-item ${activeMenu === 'jadwal' ? 'nav-item--active' : ''}`}>
+          <a href="/pelatih" class={`nav-item ${activeMenu === 'jadwal' || activeMenu === 'absensi' || activeMenu === 'pelatih' ? 'nav-item--active' : ''}`}>
             <Icon name="calendar-check" size="1.15rem" />
-            <span>Jadwal Mengajar</span>
-          </a>
-          <a href="/pelatih?tab=absensi" class={`nav-item ${activeMenu === 'absensi' ? 'nav-item--active' : ''}`}>
-            <Icon name="clipboard-text" size="1.15rem" />
-            <span>Lembar Absensi Peserta</span>
+            <span>Jadwal & Presensi Mengajar</span>
           </a>
         )}
 
