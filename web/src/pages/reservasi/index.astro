@@ -1,0 +1,194 @@
+---
+import SanctuaryLayout from '../../layouts/SanctuaryLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { actions } from 'astro:actions';
+import { JadwalService } from '../../../services/jadwal/jadwal.service';
+import { ReservasiService } from '../../../services/reservasi/reservasi.service';
+
+const user = Astro.locals.user;
+if (!user) {
+  return Astro.redirect(`/login?redirect=${encodeURIComponent(Astro.url.pathname + Astro.url.search)}`);
+}
+
+const jadwalId = Astro.url.searchParams.get('jadwal');
+if (!jadwalId) {
+  return Astro.redirect('/jadwal');
+}
+
+const sesi = await JadwalService.getJadwalById(jadwalId, user.isMemberAktif);
+if (!sesi) {
+  return Astro.redirect('/jadwal');
+}
+
+let holdResult: any = null;
+let holdError: string | null = null;
+
+// Eksekusi penahanan kursi 15 menit secara atomik via PostgreSQL FOR UPDATE
+try {
+  holdResult = await ReservasiService.pesanKursi(user.id, jadwalId, user.isMemberAktif);
+} catch (err: any) {
+  holdError = err.message || 'Gagal menahan kursi sesi.';
+}
+
+const actionResultBayar = Astro.getActionResult(actions.konfirmasiBayar);
+if (actionResultBayar?.data?.success) {
+  return Astro.redirect('/riwayat');
+}
+---
+
+<SanctuaryLayout title={`Checkout Reservasi: ${sesi.judul_sesi} — ZEIRA`}>
+  <main class="page-container" style="padding: 3.5rem 0 6rem;">
+    <div class="container" style="max-width: 640px;">
+      
+      {holdError ? (
+        <div class="surface-card" style="padding: 2.5rem; text-align: center;">
+          <Icon name="warning-circle" size="3rem" style="color: #721C24; margin-bottom: 1rem;" />
+          <h2 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; margin: 0 0 8px; color: var(--text-main);">
+            Pemesanan Kursi Tidak Dapat Diproses
+          </h2>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0 0 1.5rem;">
+            {holdError}
+          </p>
+          <div style="display: flex; justify-content: center; gap: 10px;">
+            <a href="/jadwal" class="btn-primary" style="padding: 10px 20px;">
+              Pilih Jadwal Kelas Lain
+            </a>
+            <a href="/riwayat" class="btn-secondary" style="padding: 10px 20px;">
+              Lihat Tiket Saya
+            </a>
+          </div>
+        </div>
+      ) : (
+        <div class="surface-card" style="padding: 2rem 2.25rem;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <span class="pill-tag pill-tag--green" style="font-size: 0.72rem;">
+              KUNSI KURSI ATOMIK AKTIF
+            </span>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-subtle);">
+              Pesanan: {holdResult?.pesanan?.kode_pesanan}
+            </span>
+          </div>
+
+          <h1 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 0 0 4px;">
+            {sesi.judul_sesi}
+          </h1>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+            {sesi.ruangan.nama} • Bersama <strong>{sesi.pelatih.nama}</strong>
+          </div>
+
+          <!-- 15-MINUTE COUNTDOWN BANNER -->
+          <div class="modal-countdown-banner" style="margin-bottom: 1.5rem;">
+            <Icon name="timer" size="1.4rem" weight="bold" />
+            <div>
+              <div style="font-weight: 700;">
+                Kursi Anda ditahan selama: <span class="countdown-timer" id="checkout-timer">14:59</span>
+              </div>
+              <div style="font-size: 0.72rem; opacity: 0.85;">
+                Kursi studio akan otomatis dilepas kembali ke publik jika pembayaran tidak diselesaikan.
+              </div>
+            </div>
+          </div>
+
+          <!-- DETAIL JADWAL & RUANGAN -->
+          <div style="background: #FAF8F5; border: 1px solid var(--border-hairline); border-radius: var(--radius-md); padding: 14px 16px; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--text-muted);">Hari & Tanggal:</span>
+              <strong>{new Date(sesi.waktu_mulai).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--text-muted);">Waktu Sesi:</span>
+              <strong>{new Date(sesi.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} – {new Date(sesi.waktu_selesai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--text-muted);">Lokasi Studio:</span>
+              <strong>{sesi.ruangan.nama} ({sesi.ruangan.lokasi})</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--text-muted);">Nama Pemesan:</span>
+              <strong>{user.nama_lengkap} ({user.isMemberAktif ? 'Member Aktif' : 'Tamu Non-Member'})</strong>
+            </div>
+          </div>
+
+          <!-- RINCIAN BIAYA -->
+          <div style="background: #F2EFE9; padding: 14px 18px; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 4px;">
+              <span>Tarif Sesi Kelas:</span>
+              <span style="font-family: var(--font-mono); font-weight: 700;">
+                {user.isMemberAktif ? `Rp ${sesi.harga_member.toLocaleString('id-ID')} (Harga Member)` : `Rp ${sesi.harga_non_member.toLocaleString('id-ID')} (Harga Reguler)`}
+              </span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 4px;">
+              <span>Biaya Layanan & Fasilitas:</span>
+              <span style="font-family: var(--font-mono); font-weight: 700; color: var(--color-primary);">GRATIS (Nett)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 800; padding-top: 8px; border-top: 1px dashed #D5CEBF; margin-top: 6px;">
+              <span>Total Pembayaran:</span>
+              <span style="font-family: var(--font-mono); color: var(--color-primary);">
+                {holdResult?.hargaDikenakan === 0 ? 'GRATIS' : `Rp ${holdResult?.hargaDikenakan?.toLocaleString('id-ID')}`}
+              </span>
+            </div>
+          </div>
+
+          <!-- METODE PEMBAYARAN MIDTRANS SNAP & SIMULASI -->
+          <form method="POST" action={actions.konfirmasiBayar} style="display: flex; flex-direction: column; gap: 1rem;">
+            <input type="hidden" name="pesananId" value={holdResult?.pesanan?.id} />
+
+            <div style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-subtle);">
+              PILIH METODE PEMBAYARAN INSTAN (MIDTRANS SNAP):
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <label style="background: #FFF; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); padding: 10px 12px; display: flex; align-items: center; gap: 8px; font-size: 0.82rem; cursor: pointer;">
+                <input type="radio" name="metode" value="qris" checked />
+                <div>
+                  <div style="font-weight: 700;">QRIS (Instant)</div>
+                  <div style="font-size: 0.7rem; color: var(--text-subtle);">GoPay, OVO, ShopeePay</div>
+                </div>
+              </label>
+
+              <label style="background: #FFF; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); padding: 10px 12px; display: flex; align-items: center; gap: 8px; font-size: 0.82rem; cursor: pointer;">
+                <input type="radio" name="metode" value="bca_va" />
+                <div>
+                  <div style="font-weight: 700;">BCA Virtual Acc</div>
+                  <div style="font-size: 0.7rem; color: var(--text-subtle);">Verifikasi Otomatis</div>
+                </div>
+              </label>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; margin-top: 0.5rem;">
+              Bayar Sekarang & Konfirmasi Kursi &rarr;
+            </button>
+          </form>
+
+          <div style="margin-top: 1rem; text-align: center; font-size: 0.75rem; color: var(--text-subtle);">
+            Dilindungi sistem Anti-Overbooking PostgreSQL 16 & enkripsi Midtrans Snap.
+          </div>
+
+        </div>
+      )}
+
+    </div>
+  </main>
+
+  <script is:inline>
+    // Live Countdown Timer 15 Menit
+    let remaining = 15 * 60;
+    const timerDisplay = document.getElementById('checkout-timer');
+    if (timerDisplay) {
+      const interval = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(interval);
+          timerDisplay.innerText = '00:00 (Kedaluwarsa)';
+          alert('Batas waktu pembayaran 15 menit telah habis. Kursi telah dilepaskan kembali.');
+          window.location.href = '/jadwal';
+          return;
+        }
+        const m = Math.floor(remaining / 60);
+        const s = remaining % 60;
+        timerDisplay.innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+      }, 1000);
+    }
+  </script>
+</SanctuaryLayout>
