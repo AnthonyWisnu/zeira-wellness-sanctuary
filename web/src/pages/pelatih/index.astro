@@ -1,0 +1,415 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { actions } from 'astro:actions';
+import { PelatihService } from '../../../services/pelatih/pelatih.service';
+
+const user = Astro.locals.user;
+if (!user || (user.peran !== 'pelatih' && user.peran !== 'admin')) {
+  return Astro.redirect('/login?redirect=/pelatih');
+}
+
+const currentTab = Astro.url.searchParams.get('tab') || 'jadwal';
+const selectedSesiId = Astro.url.searchParams.get('sesiId');
+
+const actionResultVerif = Astro.getActionResult(actions.verifikasiKehadiran);
+const actionResultSelesai = Astro.getActionResult(actions.selesaikanSesi);
+
+const jadwalList = await PelatihService.getJadwalPelatih(user.id);
+
+// Perhitungan metrik umum
+const totalSesi = jadwalList.length;
+const totalPesertaSemua = jadwalList.reduce((acc, s) => acc + (s.tb_reservasi_sesi?.length || 0), 0);
+const selesaiCount = jadwalList.filter((s) => s.status_sesi === 'selesai').length;
+
+// Kelas yang dipilih untuk Tab Absensi
+const activeSesi = selectedSesiId
+  ? (jadwalList.find((s) => s.id === selectedSesiId) || jadwalList[0])
+  : jadwalList[0];
+
+const pesertaActive = activeSesi?.tb_reservasi_sesi || [];
+const hadirCount = pesertaActive.filter((p: any) => p.status_reservasi === 'hadir').length;
+const mangkirCount = pesertaActive.filter((p: any) => p.status_reservasi === 'tidak_hadir').length;
+const belumDiabsenCount = pesertaActive.filter((p: any) => p.status_reservasi === 'dipesan').length;
+---
+
+<DashboardLayout title="Portal Instruktur" activeMenu={currentTab === 'absensi' ? 'absensi' : 'jadwal'}>
+  <!-- NOTIFIKASI HASIL AKSI -->
+  {(actionResultVerif?.error || actionResultSelesai?.error) && (
+    <div style="background: #FDEDED; border: 1px solid #F5C6CB; color: #721C24; padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;">
+      <Icon name="warning-circle" size="1.2rem" />
+      <span>{actionResultVerif?.error?.message || actionResultSelesai?.error?.message}</span>
+    </div>
+  )}
+  {(actionResultVerif?.data?.success || actionResultSelesai?.data?.success) && (
+    <div style="background: #EDF7EE; border: 1px solid #C8E6C9; color: #1B5E20; padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;">
+      <Icon name="check-circle" size="1.2rem" />
+      <span>Status kehadiran peserta berhasil diverifikasi secara instan.</span>
+    </div>
+  )}
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: JADWAL MENGAJAR HARI INI & MENDATANG                               -->
+  <!-- ========================================================================= -->
+  {currentTab === 'jadwal' && (
+    <div>
+      <div style="margin-bottom: 2rem;">
+        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-primary); font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">
+          PORTAL INSTRUKTUR • AGENDA MENGAJAR
+        </div>
+        <h1 style="font-family: var(--font-display); font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin: 4px 0;">
+          Jadwal Sesi Mengajar Anda
+        </h1>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+          Pantau seluruh agenda kelas studio yang Anda bimbing hari ini dan mendatang, alokasi ruangan, dan kuota peserta.
+        </p>
+      </div>
+
+      <!-- 4 KPI CARDS INSTRUKTUR -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+        <div class="surface-card" style="padding: 1.25rem;">
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">
+            TOTAL SESI KELAS
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: var(--color-primary); margin: 4px 0;">
+            {totalSesi}
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-subtle);">Sesi terdaftar aktif</div>
+        </div>
+
+        <div class="surface-card" style="padding: 1.25rem;">
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">
+            TOTAL PESERTA DIAJAR
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: var(--color-primary); margin: 4px 0;">
+            {totalPesertaSemua}
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-subtle);">Tiket terkonfirmasi sah</div>
+        </div>
+
+        <div class="surface-card" style="padding: 1.25rem;">
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">
+            SESI DISELESAIKAN
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 1.8rem; font-weight: 800; color: var(--color-primary); margin: 4px 0;">
+            {selesaiCount} / {totalSesi}
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-subtle);">Kelas tuntas terlaksana</div>
+        </div>
+
+        <div class="surface-card" style="padding: 1.25rem;">
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); text-transform: uppercase;">
+            STATUS PENUGASAN
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 1.1rem; font-weight: 800; color: #1B5E20; margin: 8px 0;">
+            ● Aktif Bertugas
+          </div>
+          <div style="font-size: 0.75rem; color: var(--text-subtle);">Sesi studio siap dipandu</div>
+        </div>
+      </div>
+
+      <!-- DAFTAR KARTU JADWAL MENGAJAR -->
+      <h2 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; margin: 0 0 1.25rem; color: var(--text-main);">
+        Daftar Sesi Mengajar ({jadwalList.length})
+      </h2>
+
+      {jadwalList.length === 0 ? (
+        <div class="surface-card" style="padding: 3rem; text-align: center;">
+          <Icon name="calendar-check" size="2.5rem" style="color: var(--text-subtle); margin-bottom: 1rem;" />
+          <h3 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; margin: 0 0 6px;">
+            Tidak Ada Sesi Mengajar
+          </h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+            Anda belum memiliki jadwal mengajar aktif untuk hari ini.
+          </p>
+        </div>
+      ) : (
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          {jadwalList.map((sesi) => {
+            const startStr = new Date(sesi.waktu_mulai).toLocaleDateString('id-ID', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+            });
+            const timeStr = `${new Date(sesi.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} – ${new Date(sesi.waktu_selesai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WITA`;
+            const pesertaCount = sesi.tb_reservasi_sesi?.length || 0;
+            const isCompleted = sesi.status_sesi === 'selesai';
+
+            return (
+              <div class="surface-card" style="padding: 1.5rem 1.75rem;">
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1.5rem;">
+                  <div style="flex: 1; min-width: 280px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                      <span class="pill-tag pill-tag--brass" style="font-size: 0.72rem;">
+                        {sesi.tb_kategori_layanan.nama_kategori}
+                      </span>
+                      <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-subtle);">
+                        {sesi.tb_ruangan.nama_ruangan} ({sesi.tb_ruangan.lokasi})
+                      </span>
+                      {isCompleted && (
+                        <span class="pill-tag pill-tag--green" style="font-size: 0.68rem;">
+                          SELESAI
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; color: var(--text-main); margin: 0 0 6px;">
+                      {sesi.judul_sesi}
+                    </h3>
+
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; font-size: 0.85rem; color: var(--text-muted);">
+                      <span>
+                        Waktu: <strong>{startStr}, {timeStr}</strong>
+                      </span>
+                      <span>•</span>
+                      <span style="font-family: var(--font-mono); font-weight: 700; color: var(--color-primary);">
+                        {sesi.jumlah_terisi} / {sesi.kapasitas_maksimal} Kursi Terisi
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- AKSI KELAS -->
+                  <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0;">
+                    <a
+                      href={`/pelatih?tab=absensi&sesiId=${sesi.id}`}
+                      class="btn-primary"
+                      style="padding: 9px 16px; font-size: 0.82rem; text-decoration: none; display: flex; align-items: center; gap: 6px;"
+                    >
+                      <Icon name="clipboard-text" size="1.1rem" />
+                      <span>Buka Lembar Absensi ({pesertaCount})</span>
+                    </a>
+
+                    {!isCompleted && (
+                      <form method="POST" action={actions.selesaikanSesi} onsubmit="return confirm('Tandai sesi kelas ini telah selesai?');" style="margin: 0;">
+                        <input type="hidden" name="jadwalId" value={sesi.id} />
+                        <button type="submit" class="btn-secondary" style="padding: 9px 14px; font-size: 0.82rem;" title="Tandai Kelas Selesai">
+                          Selesaikan
+                        </button>
+                      </form>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  )}
+
+  <!-- ========================================================================= -->
+  <!-- TAB 2: LEMBAR ABSENSI PESERTA (STUDIO CHECK-IN)                           -->
+  <!-- ========================================================================= -->
+  {currentTab === 'absensi' && (
+    <div>
+      <div style="margin-bottom: 2rem;">
+        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-primary); font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">
+          PORTAL INSTRUKTUR • VERIFIKASI KEHADIRAN STUDIO
+        </div>
+        <h1 style="font-family: var(--font-display); font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin: 4px 0;">
+          Lembar Presensi Peserta Kelas
+        </h1>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+          Verifikasi kehadiran fisik peserta di pintu studio secara real-time. Catat kehadiran atau ketidakhadiran dengan 1 kali klik.
+        </p>
+      </div>
+
+      <!-- KELAS SWITCHER TABS (Jika instruktur mengajar lebih dari 1 kelas) -->
+      {jadwalList.length > 1 && (
+        <div style="display: flex; gap: 8px; overflow-x: auto; margin-bottom: 1.5rem; padding-bottom: 4px;">
+          {jadwalList.map((sesi) => {
+            const isActive = activeSesi && activeSesi.id === sesi.id;
+            const timeStr = new Date(sesi.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            return (
+              <a
+                href={`/pelatih?tab=absensi&sesiId=${sesi.id}`}
+                class="surface-card"
+                style={`padding: 8px 16px; font-size: 0.82rem; text-decoration: none; border-radius: var(--radius-full); font-weight: 700; white-space: nowrap; display: flex; align-items: center; gap: 6px; ${
+                  isActive
+                    ? 'background: var(--color-primary); color: #FFF; border-color: var(--color-primary);'
+                    : 'color: var(--text-main);'
+                }`}
+              >
+                <span>{sesi.judul_sesi} ({timeStr} WITA)</span>
+                <span style={`font-family: var(--font-mono); font-size: 0.72rem; padding: 2px 6px; border-radius: 10px; ${isActive ? 'background: rgba(255,255,255,0.25);' : 'background: #FAF8F5;'}`}>
+                  {sesi.tb_reservasi_sesi?.length || 0}
+                </span>
+              </a>
+            );
+          })}
+        </div>
+      )}
+
+      {!activeSesi ? (
+        <div class="surface-card" style="padding: 3rem; text-align: center;">
+          <Icon name="clipboard-text" size="2.5rem" style="color: var(--text-subtle); margin-bottom: 1rem;" />
+          <h3 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; margin: 0 0 6px;">
+            Belum Ada Kelas yang Dipilih
+          </h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+            Silakan pilih sesi kelas dari tab Jadwal Mengajar untuk membuka lembar presensi.
+          </p>
+        </div>
+      ) : (
+        <div>
+          <!-- KARTU HEADER SESI YANG SEDANG DIABSEN -->
+          <div class="surface-card" style="padding: 1.5rem 1.75rem; border: 1.5px solid var(--color-brass); margin-bottom: 1.5rem;">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                  <span class="pill-tag pill-tag--brass" style="font-size: 0.72rem;">
+                    {activeSesi.tb_kategori_layanan.nama_kategori}
+                  </span>
+                  <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-subtle);">
+                    {activeSesi.tb_ruangan.nama_ruangan} ({activeSesi.tb_ruangan.lokasi})
+                  </span>
+                </div>
+                <h2 style="font-family: var(--font-display); font-size: 1.45rem; font-weight: 800; color: var(--text-main); margin: 0 0 4px;">
+                  {activeSesi.judul_sesi}
+                </h2>
+                <div style="font-size: 0.85rem; color: var(--text-muted);">
+                  Waktu: <strong>{new Date(activeSesi.waktu_mulai).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })}, {new Date(activeSesi.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} – {new Date(activeSesi.waktu_selesai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WITA</strong>
+                </div>
+              </div>
+
+              <div>
+                {activeSesi.status_sesi === 'selesai' ? (
+                  <span class="pill-tag pill-tag--green">KELAS TELAH SELESAI</span>
+                ) : (
+                  <form method="POST" action={actions.selesaikanSesi} onsubmit="return confirm('Tandai sesi kelas ini telah selesai?');" style="margin: 0;">
+                    <input type="hidden" name="jadwalId" value={activeSesi.id} />
+                    <button type="submit" class="btn-primary" style="padding: 8px 14px; font-size: 0.8rem;">
+                      Selesaikan Kelas
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>
+
+            <!-- 4 METRIK KEHADIRAN SESI INI -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #FAF8F5; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-hairline);">
+              <div style="text-align: center;">
+                <div style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-muted); text-transform: uppercase;">Total Terdaftar</div>
+                <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: var(--text-main);">{pesertaActive.length}</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 0.7rem; font-family: var(--font-mono); color: #1B5E20; text-transform: uppercase;">Hadir di Studio</div>
+                <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: #1B5E20;">{hadirCount}</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 0.7rem; font-family: var(--font-mono); color: #721C24; text-transform: uppercase;">Tidak Hadir</div>
+                <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: #721C24;">{mangkirCount}</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 0.7rem; font-family: var(--font-mono); color: var(--color-brass-dark); text-transform: uppercase;">Menunggu Absen</div>
+                <div style="font-family: var(--font-mono); font-size: 1.3rem; font-weight: 800; color: var(--color-brass-dark);">{belumDiabsenCount}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- LEMBAR DAFTAR PESERTA -->
+          <div class="surface-card" style="padding: 0; overflow: hidden;">
+            <div style="background: #FAF8F5; padding: 12px 18px; border-bottom: 1px solid var(--border-hairline); display: flex; justify-content: space-between; align-items: center;">
+              <div style="font-family: var(--font-mono); font-size: 0.75rem; font-weight: 800; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.05em;">
+                DAFTAR PESERTA TERDAFTAR ({pesertaActive.length} ORANG)
+              </div>
+              <div style="font-size: 0.75rem; color: var(--text-subtle);">
+                Trainer Verified Attendance
+              </div>
+            </div>
+
+            {pesertaActive.length === 0 ? (
+              <div style="padding: 3rem; text-align: center; color: var(--text-muted); font-size: 0.88rem;">
+                Belum ada peserta yang memesan tiket sah untuk sesi ini.
+              </div>
+            ) : (
+              <div style="display: flex; flex-direction: column;">
+                {pesertaActive.map((p: any, idx: number) => {
+                  const isPresent = p.status_reservasi === 'hadir';
+                  const isAbsent = p.status_reservasi === 'tidak_hadir';
+                  const pelanggan = p.tb_pengguna || p.tb_pengguna_tb_reservasi_sesi_id_pelangganTotb_pengguna;
+                  const namaPelanggan = pelanggan?.nama_lengkap || 'Peserta Terdaftar';
+                  const emailPelanggan = pelanggan?.email || '';
+
+                  return (
+                    <div style="padding: 14px 18px; border-bottom: 1px solid var(--border-hairline); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;">
+                      <div style="display: flex; align-items: center; gap: 14px;">
+                        <div style="width: 38px; height: 38px; border-radius: 50%; background: var(--color-primary); color: #FFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.88rem; flex-shrink: 0;">
+                          {namaPelanggan.charAt(0)}
+                        </div>
+                        <div>
+                          <div style="font-weight: 700; font-size: 0.98rem; color: var(--text-main);">
+                            {idx + 1}. {namaPelanggan}
+                          </div>
+                          <div style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono); margin-top: 2px;">
+                            Tiket: <strong>{p.kode_reservasi}</strong> {emailPelanggan ? `• ${emailPelanggan}` : ''}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <!-- STATUS BADGE -->
+                        {isPresent && (
+                          <span class="pill-tag pill-tag--green" style="font-size: 0.75rem; padding: 5px 10px;">
+                            ✓ HADIR DI STUDIO
+                          </span>
+                        )}
+                        {isAbsent && (
+                          <span style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; background: #FDEDED; color: #721C24; padding: 5px 10px; border-radius: var(--radius-sm); border: 1px solid #F5C6CB;">
+                            ✗ TIDAK HADIR (MANGKIR)
+                          </span>
+                        )}
+                        {p.status_reservasi === 'dipesan' && (
+                          <span style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; background: #FAF8F5; color: var(--color-primary); padding: 5px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-hairline);">
+                            BELUM DIABSEN
+                          </span>
+                        )}
+
+                        <!-- TOMBOL VERIFIKASI KEHADIRAN -->
+                        <div style="display: flex; gap: 6px;">
+                          <form method="POST" action={actions.verifikasiKehadiran} style="margin: 0;">
+                            <input type="hidden" name="reservasiId" value={p.id} />
+                            <input type="hidden" name="status" value="hadir" />
+                            <button
+                              type="submit"
+                              class="btn-secondary"
+                              style={`padding: 6px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer; ${
+                                isPresent
+                                  ? 'background: #2E7D32; color: #FFF; border-color: #2E7D32;'
+                                  : 'background: #EDF7EE; color: #1B5E20; border-color: #C8E6C9;'
+                              }`}
+                              title="Tandai Hadir"
+                            >
+                              Hadir
+                            </button>
+                          </form>
+
+                          <form method="POST" action={actions.verifikasiKehadiran} style="margin: 0;">
+                            <input type="hidden" name="reservasiId" value={p.id} />
+                            <input type="hidden" name="status" value="tidak_hadir" />
+                            <button
+                              type="submit"
+                              class="btn-secondary"
+                              style={`padding: 6px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer; ${
+                                isAbsent
+                                  ? 'background: #C62828; color: #FFF; border-color: #C62828;'
+                                  : 'background: #FDEDED; color: #721C24; border-color: #F5C6CB;'
+                              }`}
+                              title="Tandai Mangkir"
+                            >
+                              Mangkir
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )}
+</DashboardLayout>

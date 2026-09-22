@@ -16,6 +16,10 @@ const pathname = Astro.url.pathname;
 const isHome = pathname === "/" || pathname === "";
 const isJadwal = pathname.startsWith("/jadwal");
 const isMembership = pathname.startsWith("/membership");
+const isAdmin = pathname.startsWith("/admin");
+const isPelatih = pathname.startsWith("/pelatih");
+const isRiwayat = pathname.startsWith("/riwayat");
+const user = Astro.locals.user;
 ---
 
 <!DOCTYPE html>
@@ -47,22 +51,68 @@ const isMembership = pathname.startsWith("/membership");
 
       <nav class="nav-capsule">
         <a href="/" class={`nav-link ${isHome ? 'nav-link--active' : ''}`}>Home</a>
-        <a href="/jadwal" class={`nav-link ${isJadwal ? 'nav-link--active' : ''}`}>Jadwal Kelas</a>
+        <a href="/jadwal" class={`nav-link ${isJadwal ? 'nav-link--active' : ''}`}>Jadwal</a>
         <a href="/membership" class={`nav-link ${isMembership ? 'nav-link--active' : ''}`}>Membership</a>
+        {user && user.peran === 'pelanggan' && (
+          <a href="/riwayat" class={`nav-link ${isRiwayat ? 'nav-link--active' : ''}`}>Tiket Saya</a>
+        )}
+        {user?.peran === 'pelatih' && (
+          <a href="/pelatih" class={`nav-link ${isPelatih ? 'nav-link--active' : ''}`}>Portal Pelatih</a>
+        )}
+        {user?.peran === 'admin' && (
+          <a href="/admin" class={`nav-link ${isAdmin ? 'nav-link--active' : ''}`}>Dashboard Admin</a>
+        )}
       </nav>
 
       <div class="header__actions">
-        <div class="status-badge">
-          <span class="status-badge__dot"></span>
-          <span>STATUS: MEMBER</span>
-        </div>
-        <button class="btn-cart" data-trigger="modal" data-class-title="Dynamic Reformer Level 1–2" data-class-price="Rp 350.000" data-trainer="Sarah Renata (BASI Certified)" aria-label="Buka Keranjang Reservasi" title="Keranjang Reservasi">
-          <Icon name="shopping-bag" size="1.2rem" />
-          <span class="cart-badge">1</span>
-        </button>
-        <div class="user-avatar">
-          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="User Avatar" />
-        </div>
+        {user ? (
+          <>
+            <div class="status-badge" title={`Masuk sebagai ${user.nama_lengkap}`}>
+              <span class="status-badge__dot" style={user.isMemberAktif || user.peran === 'admin' ? 'background: #2E7D32;' : 'background: #DFB876;'}></span>
+              <span>
+                {user.peran === 'admin'
+                  ? 'ADMIN'
+                  : user.peran === 'pelatih'
+                  ? 'PELATIH'
+                  : user.isMemberAktif
+                  ? 'MEMBER AKTIF'
+                  : 'TAMU'}
+              </span>
+            </div>
+
+            {user.peran === 'admin' ? (
+              <a href="/admin" class="btn-primary" style="padding: 7px 14px; font-size: 0.8rem; text-decoration: none;">
+                Admin Console &rarr;
+              </a>
+            ) : user.peran === 'pelatih' ? (
+              <a href="/pelatih" class="btn-primary" style="padding: 7px 14px; font-size: 0.8rem; text-decoration: none;">
+                Portal Pelatih &rarr;
+              </a>
+            ) : (
+              <a href="/riwayat" class="btn-cart" aria-label="Buka Tiket Saya" title="Tiket Saya">
+                <Icon name="ticket" size="1.2rem" />
+              </a>
+            )}
+
+            <a href={user.peran === 'admin' ? '/admin' : user.peran === 'pelatih' ? '/pelatih' : '/riwayat'} class="user-avatar" title={`Akun: ${user.nama_lengkap}`}>
+              <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--color-primary); color: #FAF8F5; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; border: 1px solid var(--color-primary-border);">
+                {user.nama_lengkap.charAt(0).toUpperCase()}
+              </div>
+            </a>
+
+            <a href="/logout" class="btn-cart" title="Keluar dari Akun (Logout)" aria-label="Keluar dari Akun">
+              <Icon name="sign-out" size="1.15rem" />
+            </a>
+          </>
+        ) : (
+          <div class="status-badge">
+            <span class="status-badge__dot"></span>
+            <span>STATUS: TAMU</span>
+          </div>
+          <a href="/login" class="btn-primary" style="padding: 7px 16px; font-size: 0.8rem; text-decoration: none;">
+            Masuk Akun
+          </a>
+        )}
       </div>
     </div>
   </header>

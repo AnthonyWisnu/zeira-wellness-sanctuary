@@ -1,0 +1,652 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+import { actions } from 'astro:actions';
+
+interface Props {
+  title?: string;
+  activeMenu?: string;
+}
+
+const {
+  title = 'Sanctuary Console — ZEIRA Wellness Sanctuary',
+  activeMenu = 'overview',
+} = Astro.props;
+
+const user = Astro.locals.user;
+if (!user) {
+  return Astro.redirect('/login');
+}
+
+const pathname = Astro.url.pathname;
+const todayFormatted = new Intl.DateTimeFormat('id-ID', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+}).format(new Date());
+
+const isRoleAdmin = user.peran === 'admin';
+const isRolePelatih = user.peran === 'pelatih';
+const isRolePelanggan = user.peran === 'pelanggan';
+---
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>{title} — ZEIRA Atelier</title>
+</head>
+<body style="background: var(--bg-canvas); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh;">
+
+  <div class="dashboard-shell">
+    
+    <!-- SIDEBAR KIRI (TACTILE ATELIER SIDEBAR) -->
+    <aside class="dashboard-sidebar" id="dashboardSidebar">
+      <!-- BRAND / LOGO -->
+      <div class="sidebar-brand">
+        <a href="/" class="brand" style="text-decoration: none;">
+          <span class="brand__name" style="font-size: 1.15rem;">ZEIRA</span>
+          <span class="brand__tag" style="font-size: 0.65rem;">CONSOLE</span>
+        </a>
+        <div class="sidebar-status-pill">
+          <span class="status-pulse-dot"></span>
+          <span>ONLINE</span>
+        </div>
+      </div>
+
+      <!-- PROFIL KARTU PENGGUNA -->
+      <div class="sidebar-user-card">
+        <div class="sidebar-avatar">
+          {user.nama_lengkap.charAt(0).toUpperCase()}
+        </div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" title={user.nama_lengkap}>{user.nama_lengkap}</div>
+          <div class="sidebar-user-email" title={user.email}>{user.email}</div>
+          <div class="sidebar-role-badge">
+            {isRoleAdmin && 'SYSTEM ADMIN'}
+            {isRolePelatih && 'INSTRUKTUR'}
+            {isRolePelanggan && (user.isMemberAktif ? 'MEMBER AKTIF' : 'TAMU DROP-IN')}
+          </div>
+        </div>
+      </div>
+
+      {user.keanggotaanAktif?.nomor_loker && (
+        <div class="sidebar-locker-banner">
+          <Icon name="lock-key" size="1.05rem" />
+          <div style="flex: 1; font-size: 0.76rem;">
+            <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Dedicated Locker</div>
+            <strong style="font-family: var(--font-mono); color: var(--color-primary); font-weight: 800;">
+              {user.keanggotaanAktif.nomor_loker}
+            </strong>
+            <span style="font-size: 0.68rem; color: var(--text-subtle);">
+              ({user.keanggotaanAktif.nama_paket})
+            </span>
+          </div>
+        </div>
+      )}
+
+      <!-- MENU NAVIGASI SESUAI PERAN -->
+      <nav class="sidebar-nav">
+        
+        {isRoleAdmin && (
+          <div class="nav-section-title">ADMIN WORKSPACE</div>
+          <a href="/admin" class={`nav-item ${activeMenu === 'overview' ? 'nav-item--active' : ''}`}>
+            <Icon name="squares-four" size="1.15rem" />
+            <span>Ringkasan Studio</span>
+          </a>
+          <a href="/admin?tab=jadwal" class={`nav-item ${activeMenu === 'jadwal' ? 'nav-item--active' : ''}`}>
+            <Icon name="calendar-check" size="1.15rem" />
+            <span>Jadwal & Sesi Kelas</span>
+          </a>
+          <a href="/admin?tab=ruangan" class={`nav-item ${activeMenu === 'ruangan' ? 'nav-item--active' : ''}`}>
+            <Icon name="door" size="1.15rem" />
+            <span>Ruangan & Loker</span>
+          </a>
+          <a href="/admin?tab=transaksi" class={`nav-item ${activeMenu === 'transaksi' ? 'nav-item--active' : ''}`}>
+            <Icon name="receipt" size="1.15rem" />
+            <span>Buku Besar Transaksi</span>
+          </a>
+        )}
+
+        {isRolePelatih && (
+          <div class="nav-section-title">PORTAL INSTRUKTUR</div>
+          <a href="/pelatih?tab=jadwal" class={`nav-item ${activeMenu === 'jadwal' ? 'nav-item--active' : ''}`}>
+            <Icon name="calendar-check" size="1.15rem" />
+            <span>Jadwal Mengajar</span>
+          </a>
+          <a href="/pelatih?tab=absensi" class={`nav-item ${activeMenu === 'absensi' ? 'nav-item--active' : ''}`}>
+            <Icon name="clipboard-text" size="1.15rem" />
+            <span>Lembar Absensi Peserta</span>
+          </a>
+        )}
+
+        {isRolePelanggan && (
+          <div class="nav-section-title">PORTAL PELANGGAN</div>
+          <a href="/riwayat?tab=tiket" class={`nav-item ${activeMenu === 'tiket' ? 'nav-item--active' : ''}`}>
+            <Icon name="ticket" size="1.15rem" />
+            <span>Tiket & Riwayat Sesi</span>
+          </a>
+          <a href="/riwayat?tab=membership" class={`nav-item ${activeMenu === 'membership' ? 'nav-item--active' : ''}`}>
+            <Icon name="lock-key" size="1.15rem" />
+            <span>Status Member & Loker</span>
+          </a>
+          <a href="/jadwal" class="nav-item">
+            <Icon name="calendar-check" size="1.15rem" />
+            <span>Pesan Kursi Studio</span>
+          </a>
+          <a href="/membership" class="nav-item">
+            <Icon name="crown" size="1.15rem" />
+            <span>Paket Membership</span>
+          </a>
+        )}
+
+        <div class="nav-section-divider"></div>
+
+        <div class="nav-section-title">SANCTUARY EXT</div>
+        <a href="/" class="nav-item nav-item--external">
+          <Icon name="arrow-square-out" size="1.05rem" />
+          <span>Lihat Website Publik</span>
+        </a>
+        <a href="/jadwal" class="nav-item nav-item--external">
+          <Icon name="calendar-check" size="1.05rem" />
+          <span>Katalog Jadwal Kelas</span>
+        </a>
+      </nav>
+
+      <!-- TOMBOL KELUAR DI BAWAH -->
+      <div class="sidebar-footer">
+        <form method="POST" action="/logout" style="margin: 0; width: 100%;">
+          <button type="submit" class="sidebar-logout-btn" title="Keluar dari Akun">
+            <Icon name="sign-out" size="1.1rem" />
+            <span>Keluar dari Akun</span>
+          </button>
+        </form>
+      </div>
+    </aside>
+
+    <!-- BACKDROP MOBILE -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- MAIN VIEWPORT KANAN -->
+    <div class="dashboard-main">
+      
+      <!-- ATELIER TOPBAR -->
+      <header class="dashboard-topbar">
+        <div class="topbar-left">
+          <button type="button" class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Buka Menu">
+            <Icon name="squares-four" size="1.25rem" />
+          </button>
+          <div class="breadcrumbs">
+            <span class="crumb-root">Sanctuary Atelier</span>
+            <span class="crumb-separator">/</span>
+            <span class="crumb-current">
+              {isRoleAdmin && 'Administrator Console'}
+              {isRolePelatih && 'Portal Instruktur'}
+              {isRolePelanggan && 'Portal Pelanggan'}
+            </span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- DB STATUS PILL -->
+          <div class="system-status-chip">
+            <span class="chip-dot"></span>
+            <span class="chip-text">POSTGRESQL 18 ACID</span>
+          </div>
+
+          <!-- TANGGAL REALTIME -->
+          <div class="date-chip">
+            <Icon name="clock" size="0.95rem" />
+            <span>{todayFormatted}</span>
+          </div>
+
+          <!-- USER PILL SHORTCUT -->
+          <div class="topbar-user-pill">
+            <span class="topbar-user-initial">{user.nama_lengkap.charAt(0).toUpperCase()}</span>
+            <span class="topbar-user-name">{user.nama_lengkap.split(' ')[0]}</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- WORKSPACE CONTAINER -->
+      <main class="dashboard-content">
+        <slot />
+      </main>
+
+    </div>
+
+  </div>
+
+  <script is:inline>
+    // Responsive sidebar toggle
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('dashboardSidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+
+    if (toggleBtn && sidebar && backdrop) {
+      toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('sidebar--open');
+        backdrop.classList.toggle('backdrop--open');
+      });
+      backdrop.addEventListener('click', () => {
+        sidebar.classList.remove('sidebar--open');
+        backdrop.classList.remove('backdrop--open');
+      });
+    }
+  </script>
+
+</body>
+</html>
+
+<style>
+  /* DASHBOARD SHELL LAYOUT */
+  .dashboard-shell {
+    display: flex;
+    min-height: 100vh;
+    background: var(--bg-canvas);
+  }
+
+  /* SIDEBAR STYLING */
+  .dashboard-sidebar {
+    width: 280px;
+    min-width: 280px;
+    background: #FAF8F5;
+    border-right: 1px solid var(--border-hairline);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 2px 0 10px rgba(28, 48, 36, 0.03);
+  }
+
+  .sidebar-brand {
+    padding: 1.5rem 1.5rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-hairline);
+  }
+
+  .sidebar-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #EDF7EE;
+    border: 1px solid #C8E6C9;
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #1B5E20;
+    letter-spacing: 0.06em;
+  }
+
+  .status-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2E7D32;
+    box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+  }
+
+  /* USER CARD */
+  .sidebar-user-card {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #FFF;
+    margin: 1rem 1.25rem 0.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-hairline);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 2px 6px rgba(0, 0, 0, 0.03);
+  }
+
+  .sidebar-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #FAF8F5;
+    font-weight: 800;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1.5px solid var(--color-brass);
+    box-shadow: 0 2px 5px rgba(28, 48, 36, 0.2);
+  }
+
+  .sidebar-user-info {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .sidebar-user-name {
+    font-weight: 800;
+    font-size: 0.88rem;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+  }
+
+  .sidebar-user-email {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+
+  .sidebar-role-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 800;
+    color: var(--color-brass-dark);
+    background: var(--color-brass-bg);
+    border: 1px solid rgba(196, 155, 88, 0.35);
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* LOCKER BANNER */
+  .sidebar-locker-banner {
+    margin: 0.5rem 1.25rem 0.75rem;
+    background: #FAF4E8;
+    border: 1px dashed var(--color-brass);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-brass-dark);
+  }
+
+  /* NAVIGATION */
+  .sidebar-nav {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .nav-section-title {
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    font-weight: 800;
+    color: var(--text-subtle);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.75rem 0.5rem 0.35rem;
+  }
+
+  .nav-section-divider {
+    height: 1px;
+    background: var(--border-hairline);
+    margin: 0.75rem 0.5rem;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+  }
+
+  .nav-item:hover {
+    background: #F2EFE9;
+    color: var(--text-main);
+  }
+
+  .nav-item--active {
+    background: var(--color-primary);
+    color: #FAF8F5;
+    font-weight: 700;
+    border: 1px solid var(--color-primary-border);
+    box-shadow: 0 2px 6px rgba(28, 48, 36, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .nav-item--active:hover {
+    background: var(--color-primary-light);
+    color: #FAF8F5;
+  }
+
+  .nav-item--external {
+    font-size: 0.8rem;
+    color: var(--text-subtle);
+  }
+
+  /* FOOTER & LOGOUT */
+  .sidebar-footer {
+    padding: 1rem 1.25rem 1.5rem;
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  .sidebar-logout-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: #FFF;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    color: #8C2C2C;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+
+  .sidebar-logout-btn:hover {
+    background: #FDF2F2;
+    border-color: #F5C6CB;
+    color: #6E1E1E;
+  }
+
+  /* MAIN VIEWPORT */
+  .dashboard-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* TOPBAR */
+  .dashboard-topbar {
+    height: 64px;
+    background: #FAF8F5;
+    border-bottom: 1px solid var(--border-hairline);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    backdrop-filter: blur(8px);
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .sidebar-toggle-btn {
+    display: none;
+    background: none;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    padding: 6px;
+    cursor: pointer;
+    color: var(--text-main);
+  }
+
+  .breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.84rem;
+  }
+
+  .crumb-root {
+    color: var(--text-subtle);
+    font-weight: 500;
+  }
+
+  .crumb-separator {
+    color: var(--border-hairline);
+  }
+
+  .crumb-current {
+    color: var(--text-main);
+    font-weight: 700;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .system-status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #FFF;
+    border: 1px solid var(--border-hairline);
+    padding: 5px 10px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+
+  .chip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2E7D32;
+  }
+
+  .date-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: var(--text-subtle);
+    background: #FFF;
+    border: 1px solid var(--border-hairline);
+    padding: 5px 12px;
+    border-radius: var(--radius-full);
+  }
+
+  .topbar-user-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 10px 3px 4px;
+    background: #FFF;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-full);
+  }
+
+  .topbar-user-initial {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.75rem;
+  }
+
+  .topbar-user-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  /* WORKSPACE CONTENT */
+  .dashboard-content {
+    flex: 1;
+    padding: 2.25rem 2.5rem 4rem;
+    max-width: 1350px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .sidebar-backdrop {
+    display: none;
+  }
+
+  /* RESPONSIVE BREAKPOINTS */
+  @media (max-width: 1024px) {
+    .sidebar-toggle-btn {
+      display: block;
+    }
+
+    .dashboard-sidebar {
+      position: fixed;
+      left: -280px;
+      transition: left 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dashboard-sidebar.sidebar--open {
+      left: 0;
+    }
+
+    .sidebar-backdrop.backdrop--open {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(24, 28, 25, 0.4);
+      z-index: 99;
+      backdrop-filter: blur(2px);
+    }
+
+    .dashboard-content {
+      padding: 1.5rem 1rem 3rem;
+    }
+
+    .dashboard-topbar {
+      padding: 0 1rem;
+    }
+
+    .date-chip, .system-status-chip {
+      display: none;
+    }
+  }
+</style>

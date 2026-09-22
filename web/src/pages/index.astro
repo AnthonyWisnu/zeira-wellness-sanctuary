@@ -1,6 +1,12 @@
 ---
 import SanctuaryLayout from '../layouts/SanctuaryLayout.astro';
 import Icon from '../components/Icon.astro';
+import { JadwalService } from '../../services/jadwal/jadwal.service';
+
+const user = Astro.locals.user;
+const isMemberAktif = !!user?.isMemberAktif;
+const { jadwal } = await JadwalService.getKatalogJadwal(isMemberAktif);
+const upcomingSessions = jadwal.slice(0, 3);
 ---
 
 <SanctuaryLayout
@@ -188,68 +194,47 @@ import Icon from '../components/Icon.astro';
       </div>
 
       <div class="schedule-list">
-        <!-- Item 1 -->
-        <div class="schedule-item">
-          <div class="schedule-time-badge">
-            <div class="schedule-time">07:00</div>
-            <div class="schedule-tz">WIB</div>
+        {upcomingSessions.length === 0 ? (
+          <div style="padding: 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+            Belum ada jadwal sesi terbuka hari ini. Silakan kunjungi halaman <a href="/jadwal" style="color: var(--color-primary); font-weight: 700; text-decoration: underline;">Jadwal Lengkap</a>.
           </div>
-          <div class="schedule-details">
-            <div class="schedule-tags">
-              <span class="pill-tag">Studio 01</span>
-              <span class="pill-tag pill-tag--green">Reformer Core</span>
+        ) : (
+          upcomingSessions.map((sesi) => (
+            <div class="schedule-item">
+              <div class="schedule-time-badge">
+                <div class="schedule-time">
+                  {new Date(sesi.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                </div>
+                <div class="schedule-tz">WIB</div>
+              </div>
+              <div class="schedule-details">
+                <div class="schedule-tags">
+                  <span class="pill-tag">{sesi.ruangan.nama}</span>
+                  <span class="pill-tag pill-tag--green">{sesi.kategori.nama}</span>
+                </div>
+                <div class="schedule-class-name">{sesi.judul_sesi}</div>
+                <div class="schedule-instructor">Bersama {sesi.pelatih.nama} ({sesi.pelatih.spesialisasi || 'Instructor'})</div>
+              </div>
+              <div class="schedule-price-col">
+                <div class="schedule-price">
+                  {sesi.harga_efektif === 0 ? 'GRATIS' : `Rp ${sesi.harga_efektif.toLocaleString('id-ID')}`}
+                </div>
+                <div class="schedule-seats">
+                  {sesi.sisa_kuota === 0 ? 'Penuh' : `Tersisa ${sesi.sisa_kuota} Kursi`}
+                </div>
+              </div>
+              {sesi.sisa_kuota > 0 ? (
+                <a href={`/reservasi?jadwal=${sesi.id}`} class="btn-book-sm" style="text-decoration: none; text-align: center;">
+                  Pesan
+                </a>
+              ) : (
+                <button class="btn-book-sm" disabled style="opacity: 0.5; cursor: not-allowed;">
+                  Penuh
+                </button>
+              )}
             </div>
-            <div class="schedule-class-name">Dynamic Reformer Level 1–2</div>
-            <div class="schedule-instructor">Bersama Sarah Renata (BASI Certified)</div>
-          </div>
-          <div class="schedule-price-col">
-            <div class="schedule-price">Rp 350.000</div>
-            <div class="schedule-seats">Tersisa 2 Kursi</div>
-          </div>
-          <button class="btn-book-sm" data-trigger="modal" data-class-title="Dynamic Reformer Level 1–2" data-class-price="Rp 350.000" data-trainer="Sarah Renata (BASI Certified)">Book</button>
-        </div>
-
-        <!-- Item 2 -->
-        <div class="schedule-item">
-          <div class="schedule-time-badge">
-            <div class="schedule-time">10:30</div>
-            <div class="schedule-tz">WIB</div>
-          </div>
-          <div class="schedule-details">
-            <div class="schedule-tags">
-              <span class="pill-tag">Studio 02</span>
-              <span class="pill-tag pill-tag--orange">Apparatus</span>
-            </div>
-            <div class="schedule-class-name">Cadillacs Tower & Spinal Flow</div>
-            <div class="schedule-instructor">Bersama Kenji Sato (Polestar Master)</div>
-          </div>
-          <div class="schedule-price-col">
-            <div class="schedule-price">Rp 280.000</div>
-            <div class="schedule-seats">Tersisa 4 Kursi</div>
-          </div>
-          <button class="btn-book-sm" data-trigger="modal" data-class-title="Cadillacs Tower & Spinal Flow" data-class-price="Rp 280.000" data-trainer="Kenji Sato (Polestar Master)">Book</button>
-        </div>
-
-        <!-- Item 3 -->
-        <div class="schedule-item">
-          <div class="schedule-time-badge">
-            <div class="schedule-time">17:30</div>
-            <div class="schedule-tz">WIB</div>
-          </div>
-          <div class="schedule-details">
-            <div class="schedule-tags">
-              <span class="pill-tag">Zen Hall</span>
-              <span class="pill-tag pill-tag--orange">Tibetan Bowl</span>
-            </div>
-            <div class="schedule-class-name">Sound Bath & Candlelight Yin</div>
-            <div class="schedule-instructor">Bersama Maya Anindita (Sound Healer)</div>
-          </div>
-          <div class="schedule-price-col">
-            <div class="schedule-price">Rp 300.000</div>
-            <div class="schedule-seats" style="color: #BA1A1A;">Tersisa 1 Kursi</div>
-          </div>
-          <button class="btn-book-sm" data-trigger="modal" data-class-title="Sound Bath & Candlelight Yin" data-class-price="Rp 300.000" data-trainer="Maya Anindita (Sound Healer)">Book</button>
-        </div>
+          ))
+        )}
       </div>
     </div>
 

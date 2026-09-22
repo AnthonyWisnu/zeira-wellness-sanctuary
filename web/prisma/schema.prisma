@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tb_jadwal_sesi {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  judul_sesi          String              @db.VarChar(150)
+  id_kategori         String              @db.Uuid
+  id_pelatih          String              @db.Uuid
+  id_ruangan          String              @db.Uuid
+  waktu_mulai         DateTime            @db.Timestamptz(6)
+  waktu_selesai       DateTime            @db.Timestamptz(6)
+  kapasitas_maksimal  Int
+  jumlah_terisi       Int                 @default(0)
+  harga_non_member    Decimal             @default(0) @db.Decimal(12, 2)
+  harga_member        Decimal             @default(0) @db.Decimal(12, 2)
+  batas_batal_jam     Int                 @default(24)
+  status_sesi         String              @default("terjadwal") @db.VarChar(20)
+  waktu_dibuat        DateTime            @default(now()) @db.Timestamptz(6)
+  waktu_diperbarui    DateTime            @default(now()) @db.Timestamptz(6)
+  tb_kategori_layanan tb_kategori_layanan @relation(fields: [id_kategori], references: [id], onUpdate: NoAction)
+  tb_pengguna         tb_pengguna         @relation(fields: [id_pelatih], references: [id], onUpdate: NoAction)
+  tb_ruangan          tb_ruangan          @relation(fields: [id_ruangan], references: [id], onUpdate: NoAction)
+  tb_pesanan          tb_pesanan[]
+  tb_reservasi_sesi   tb_reservasi_sesi[]
+
+  @@index([id_pelatih], map: "idx_jadwal_pelatih")
+  @@index([waktu_mulai, waktu_selesai], map: "idx_jadwal_rentang_waktu")
+  @@index([id_ruangan], map: "idx_jadwal_ruangan")
+  @@index([status_sesi], map: "idx_jadwal_status")
+}
+
+model tb_kategori_layanan {
+  id               String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama_kategori    String           @unique @db.VarChar(100)
+  slug             String           @unique @db.VarChar(100)
+  deskripsi        String?
+  ikon             String?          @db.VarChar(50)
+  status_aktif     Boolean          @default(true)
+  waktu_dibuat     DateTime         @default(now()) @db.Timestamptz(6)
+  waktu_diperbarui DateTime         @default(now()) @db.Timestamptz(6)
+  tb_jadwal_sesi   tb_jadwal_sesi[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tb_keanggotaan {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_pelanggan        String              @db.Uuid
+  id_paket_membership String              @db.Uuid
+  id_loker            String?             @db.Uuid
+  tanggal_mulai       DateTime            @db.Date
+  tanggal_berakhir    DateTime            @db.Date
+  status              String              @default("aktif") @db.VarChar(20)
+  catatan             String?
+  waktu_dibuat        DateTime            @default(now()) @db.Timestamptz(6)
+  waktu_diperbarui    DateTime            @default(now()) @db.Timestamptz(6)
+  tb_loker            tb_loker?           @relation(fields: [id_loker], references: [id], onUpdate: NoAction)
+  tb_paket_membership tb_paket_membership @relation(fields: [id_paket_membership], references: [id], onUpdate: NoAction)
+  tb_pengguna         tb_pengguna         @relation(fields: [id_pelanggan], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([id_pelanggan], map: "idx_keanggotaan_pelanggan")
+  @@index([status], map: "idx_keanggotaan_status")
+  @@index([tanggal_berakhir], map: "idx_keanggotaan_tanggal")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tb_loker {
+  id               String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nomor_loker      String           @unique @db.VarChar(20)
+  lokasi_area      String           @default("Locker Room Utama") @db.VarChar(50)
+  status           String           @default("tersedia") @db.VarChar(20)
+  catatan          String?
+  waktu_dibuat     DateTime         @default(now()) @db.Timestamptz(6)
+  waktu_diperbarui DateTime         @default(now()) @db.Timestamptz(6)
+  tb_keanggotaan   tb_keanggotaan[]
+
+  @@index([status], map: "idx_loker_status")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tb_paket_membership {
+  id                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama_paket          String           @unique @db.VarChar(100)
+  durasi_hari         Int
+  harga               Decimal          @db.Decimal(12, 2)
+  fasilitas_deskripsi String
+  status_aktif        Boolean          @default(true)
+  waktu_dibuat        DateTime         @default(now()) @db.Timestamptz(6)
+  waktu_diperbarui    DateTime         @default(now()) @db.Timestamptz(6)
+  tb_keanggotaan      tb_keanggotaan[]
+  tb_pesanan          tb_pesanan[]
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tb_pengguna {
+  id                                                                       String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama_lengkap                                                             String              @db.VarChar(150)
+  email                                                                    String              @unique @db.VarChar(255)
+  nomor_telepon                                                            String?             @db.VarChar(25)
+  kata_sandi_hash                                                          String              @db.VarChar(255)
+  peran                                                                    String              @default("pelanggan") @db.VarChar(20)
+  status_aktif                                                             Boolean             @default(true)
+  waktu_dibuat                                                             DateTime            @default(now()) @db.Timestamptz(6)
+  waktu_diperbarui                                                         DateTime            @default(now()) @db.Timestamptz(6)
+  tb_jadwal_sesi                                                           tb_jadwal_sesi[]
+  tb_keanggotaan                                                           tb_keanggotaan[]
+  tb_pesanan_tb_pesanan_diverifikasi_olehTotb_pengguna                     tb_pesanan[]        @relation("tb_pesanan_diverifikasi_olehTotb_pengguna")
+  tb_pesanan_tb_pesanan_id_pelangganTotb_pengguna                          tb_pesanan[]        @relation("tb_pesanan_id_pelangganTotb_pengguna")
+  tb_profil_pelatih                                                        tb_profil_pelatih?
+  tb_reservasi_sesi_tb_reservasi_sesi_diabsen_oleh_pelatih_idTotb_pengguna tb_reservasi_sesi[] @relation("tb_reservasi_sesi_diabsen_oleh_pelatih_idTotb_pengguna")
+  tb_reservasi_sesi_tb_reservasi_sesi_id_pelangganTotb_pengguna            tb_reservasi_sesi[] @relation("tb_reservasi_sesi_id_pelangganTotb_pengguna")
+
+  @@index([email], map: "idx_pengguna_email")
+  @@index([peran], map: "idx_pengguna_peran")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tb_pesanan {
+  id                                                    String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kode_pesanan                                          String               @unique @db.VarChar(50)
+  id_pelanggan                                          String               @db.Uuid
+  tipe_pesanan                                          String               @db.VarChar(20)
+  id_paket_membership                                   String?              @db.Uuid
+  id_jadwal                                             String?              @db.Uuid
+  total_bayar                                           Decimal              @db.Decimal(12, 2)
+  metode_pembayaran                                     String?              @db.VarChar(50)
+  snap_token                                            String?              @db.VarChar(255)
+  snap_redirect_url                                     String?
+  id_transaksi_gateway                                  String?              @db.VarChar(100)
+  signature_key_terakhir                                String?              @db.VarChar(255)
+  payload_gateway                                       Json?
+  waktu_kedaluwarsa                                     DateTime?            @db.Timestamptz(6)
+  bukti_transfer                                        String?              @db.VarChar(255)
+  status_pembayaran                                     String               @default("menunggu_pembayaran") @db.VarChar(25)
+  diverifikasi_oleh                                     String?              @db.Uuid
+  waktu_verifikasi                                      DateTime?            @db.Timestamptz(6)
+  catatan_verifikasi                                    String?
+  waktu_dibuat                                          DateTime             @default(now()) @db.Timestamptz(6)
+  waktu_diperbarui                                      DateTime             @default(now()) @db.Timestamptz(6)
+  tb_pengguna_tb_pesanan_diverifikasi_olehTotb_pengguna tb_pengguna?         @relation("tb_pesanan_diverifikasi_olehTotb_pengguna", fields: [diverifikasi_oleh], references: [id], onUpdate: NoAction)
+  tb_jadwal_sesi                                        tb_jadwal_sesi?      @relation(fields: [id_jadwal], references: [id], onUpdate: NoAction)
+  tb_paket_membership                                   tb_paket_membership? @relation(fields: [id_paket_membership], references: [id], onUpdate: NoAction)
+  tb_pengguna_tb_pesanan_id_pelangganTotb_pengguna      tb_pengguna          @relation("tb_pesanan_id_pelangganTotb_pengguna", fields: [id_pelanggan], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tb_reservasi_sesi                                     tb_reservasi_sesi[]
+
+  @@index([kode_pesanan], map: "idx_pesanan_kode")
+  @@index([id_pelanggan], map: "idx_pesanan_pelanggan")
+  @@index([status_pembayaran], map: "idx_pesanan_status")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tb_profil_pelatih {
+  id               String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_pengguna      String      @unique @db.Uuid
+  spesialisasi     String      @db.VarChar(150)
+  sertifikasi      String?
+  bio              String?
+  pengalaman_tahun Int         @default(1)
+  waktu_dibuat     DateTime    @default(now()) @db.Timestamptz(6)
+  waktu_diperbarui DateTime    @default(now()) @db.Timestamptz(6)
+  tb_pengguna      tb_pengguna @relation(fields: [id_pengguna], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([id_pengguna], map: "idx_profil_pelatih_pengguna")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tb_reservasi_sesi {
+  id                                                                 String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  kode_reservasi                                                     String         @unique @db.VarChar(50)
+  id_pesanan                                                         String?        @db.Uuid
+  id_jadwal                                                          String         @db.Uuid
+  id_pelanggan                                                       String         @db.Uuid
+  tipe_tarif                                                         String         @default("non_member") @db.VarChar(20)
+  harga_dikenakan                                                    Decimal        @db.Decimal(12, 2)
+  status_reservasi                                                   String         @default("menunggu_pembayaran") @db.VarChar(20)
+  waktu_absensi                                                      DateTime?      @db.Timestamptz(6)
+  diabsen_oleh_pelatih_id                                            String?        @db.Uuid
+  alasan_batal                                                       String?
+  waktu_dibuat                                                       DateTime       @default(now()) @db.Timestamptz(6)
+  waktu_diperbarui                                                   DateTime       @default(now()) @db.Timestamptz(6)
+  tb_pengguna_tb_reservasi_sesi_diabsen_oleh_pelatih_idTotb_pengguna tb_pengguna?   @relation("tb_reservasi_sesi_diabsen_oleh_pelatih_idTotb_pengguna", fields: [diabsen_oleh_pelatih_id], references: [id], onUpdate: NoAction)
+  tb_jadwal_sesi                                                     tb_jadwal_sesi @relation(fields: [id_jadwal], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tb_pengguna_tb_reservasi_sesi_id_pelangganTotb_pengguna            tb_pengguna    @relation("tb_reservasi_sesi_id_pelangganTotb_pengguna", fields: [id_pelanggan], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tb_pesanan                                                         tb_pesanan?    @relation(fields: [id_pesanan], references: [id], onUpdate: NoAction)
+
+  @@index([id_jadwal], map: "idx_reservasi_jadwal")
+  @@index([id_pelanggan], map: "idx_reservasi_pelanggan")
+  @@index([status_reservasi], map: "idx_reservasi_status")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model tb_ruangan {
+  id                 String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  nama_ruangan       String           @unique @db.VarChar(100)
+  lokasi             String           @db.VarChar(100)
+  kapasitas_maksimal Int
+  status_aktif       Boolean          @default(true)
+  catatan            String?
+  waktu_dibuat       DateTime         @default(now()) @db.Timestamptz(6)
+  waktu_diperbarui   DateTime         @default(now()) @db.Timestamptz(6)
+  tb_jadwal_sesi     tb_jadwal_sesi[]
+}

@@ -1,0 +1,273 @@
+---
+import DashboardLayout from '../../layouts/DashboardLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { actions } from 'astro:actions';
+import { ReservasiService } from '../../../services/reservasi/reservasi.service';
+
+const user = Astro.locals.user;
+if (!user) {
+  return Astro.redirect('/login?redirect=/riwayat');
+}
+
+const actionResult = Astro.getActionResult(actions.batalkanReservasi);
+const tiketList = await ReservasiService.getRiwayatTiketPelanggan(user.id);
+const currentTab = Astro.url.searchParams.get('tab') || 'tiket';
+---
+
+<DashboardLayout title="Tiket & Keanggotaan Saya" activeMenu={currentTab}>
+  {user.peran === 'admin' && (
+    <div style="background: #EBF3FF; border: 1px solid #B8D5FA; color: #1E4E8C; padding: 12px 18px; border-radius: var(--radius-md); font-size: 0.86rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <Icon name="shield-check" size="1.25rem" />
+        <span>Anda sedang masuk sebagai <strong>System Administrator ({user.nama_lengkap})</strong>. Halaman ini adalah portal pelanggan.</span>
+      </div>
+      <a href="/admin" class="btn-primary" style="padding: 6px 14px; font-size: 0.8rem; text-decoration: none; white-space: nowrap;">
+        Buka Dashboard Admin &rarr;
+      </a>
+    </div>
+  )}
+
+  <!-- NOTIFIKASI AKSI -->
+  {actionResult?.error && (
+    <div style="background: #FDEDED; border: 1px solid #F5C6CB; color: #721C24; padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;">
+      <Icon name="warning-circle" size="1.2rem" />
+      <span>{actionResult.error.message}</span>
+    </div>
+  )}
+  {actionResult?.data?.success && (
+    <div style="background: #EDF7EE; border: 1px solid #C8E6C9; color: #1B5E20; padding: 12px 16px; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;">
+      <Icon name="check-circle" size="1.2rem" />
+      <span>{actionResult.data.message || 'Aksi berhasil diproses.'}</span>
+    </div>
+  )}
+
+  <!-- VIEW 1: STATUS MEMBERSHIP & DEDICATED LOCKER -->
+  {currentTab === 'membership' && (
+    <div>
+      <div style="margin-bottom: 2rem;">
+        <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-primary); font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">
+          PORTAL KEANGGOTAAN EKSKLUSIF
+        </div>
+        <h1 style="font-family: var(--font-display); font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin: 4px 0;">
+          Status Membership & Lemari Loker Pribadi
+        </h1>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+          Hak akses fasilitas kebugaran, lemari loker digital RFID tetap, dan masa aktif langganan Anda.
+        </p>
+      </div>
+
+      {user.isMemberAktif && user.keanggotaanAktif ? (
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.75rem;">
+          <!-- KARTU STATUS MEMBER -->
+          <div class="surface-card" style="padding: 1.75rem; border: 1.5px solid var(--color-brass);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+              <div>
+                <span class="pill-tag pill-tag--brass" style="font-size: 0.72rem; margin-bottom: 6px;">
+                  MEMBER RESMI AKTIF
+                </span>
+                <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin: 0;">
+                  {user.keanggotaanAktif.nama_paket}
+                </h3>
+              </div>
+              <div style="width: 42px; height: 42px; border-radius: 50%; background: var(--color-brass-bg); border: 1px solid var(--color-brass); display: flex; align-items: center; justify-content: center; color: var(--color-brass-dark);">
+                <Icon name="crown" size="1.4rem" />
+              </div>
+            </div>
+
+            <div style="background: #FFF; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 1.25rem;">
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px;">Masa Berlaku Keanggotaan:</div>
+              <div style="font-family: var(--font-mono); font-size: 0.95rem; font-weight: 800; color: var(--color-primary);">
+                Aktif s/d {user.keanggotaanAktif.tanggal_berakhir}
+              </div>
+            </div>
+
+            <div style="font-size: 0.82rem; color: var(--text-main); font-weight: 700; margin-bottom: 8px;">
+              Hak Istimewa yang Anda Miliki:
+            </div>
+            <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.82rem; color: var(--text-muted); line-height: 1.6;">
+              <li>Akses bebas Hydro Mineral Pool (34°C) & Herbal Sauna harian.</li>
+              <li>Priority Vision Window: Hak reservasi jadwal hingga <strong>30 hari ke depan</strong>.</li>
+              <li>Tarif hemat sesi kelas studio (diskon hingga 50%).</li>
+              <li>Complimentary herbal hydration bar harian.</li>
+            </ul>
+          </div>
+
+          <!-- KARTU DEDICATED LOCKER RFID -->
+          <div class="surface-card" style="padding: 1.75rem; border: 1.5px solid var(--color-primary);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+              <div>
+                <span class="pill-tag pill-tag--green" style="font-size: 0.72rem; margin-bottom: 6px;">
+                  DEDICATED LOCKER READY
+                </span>
+                <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin: 0;">
+                  Lemari Loker Pribadi Anda
+                </h3>
+              </div>
+              <div style="width: 42px; height: 42px; border-radius: 50%; background: #EDF7EE; border: 1px solid #C8E6C9; display: flex; align-items: center; justify-content: center; color: #1B5E20;">
+                <Icon name="lock-key" size="1.4rem" />
+              </div>
+            </div>
+
+            <div style="background: #FAF8F5; border: 1px dashed var(--color-primary); border-radius: var(--radius-sm); padding: 14px; text-align: center; margin-bottom: 1.25rem;">
+              <div style="font-size: 0.72rem; font-family: var(--font-mono); color: var(--text-subtle); text-transform: uppercase;">
+                KODE LEMARI LOKER FISIK
+              </div>
+              <div style="font-family: var(--font-mono); font-size: 2.4rem; font-weight: 800; color: var(--color-primary); letter-spacing: 0.05em; margin: 4px 0;">
+                {user.keanggotaanAktif.nomor_loker || 'LK-02'}
+              </div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">
+                Lokasi: <strong>Locker Room Pria — Sayap Timur</strong>
+              </div>
+            </div>
+
+            <div style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+              Loker ini telah dialokasikan khusus untuk Anda. Anda dapat menggunakan kartu RFID digital pada aplikasi atau scan gelang fisik saat tiba di resepsionis.
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div class="surface-card" style="padding: 2.5rem; text-align: center; max-width: 600px; margin: 0 auto;">
+          <div style="width: 54px; height: 54px; border-radius: 50%; background: var(--color-brass-bg); border: 1px solid var(--color-brass); display: flex; align-items: center; justify-content: center; color: var(--color-brass-dark); margin: 0 auto 1.25rem;">
+            <Icon name="lock-key" size="1.8rem" />
+          </div>
+          <span class="pill-tag pill-tag--brass" style="font-size: 0.75rem; margin-bottom: 8px;">
+            STATUS: TAMU UMUM (DROP-IN PASS)
+          </span>
+          <h2 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 6px 0 8px;">
+            Anda Belum Memiliki Loker Pribadi
+          </h2>
+          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.75rem;">
+            Sebagai tamu drop-in, Anda dapat memesan sesi kelas studio dengan tarif reguler dan jendela jadwal 7 hari. Tingkatkan ke Membership untuk mendapatkan <strong>1 Dedicated Locker Tetap</strong>, akses bebas kolam hydro harian, dan tarif diskon hingga 50%!
+          </p>
+          <a href="/membership" class="btn-primary" style="padding: 12px 24px; text-decoration: none; font-size: 0.95rem;">
+            Pilih Paket Membership & Loker &rarr;
+          </a>
+        </div>
+      )}
+    </div>
+  )}
+
+  <!-- VIEW 2: TIKET RESERVASI KELAS (DEFAULT) -->
+  {currentTab === 'tiket' && (
+    <div>
+      <div style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1rem;">
+        <div>
+          <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-primary); font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;">
+            PORTAL RESERVASI PELANGGAN
+          </div>
+          <h1 style="font-family: var(--font-display); font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin: 4px 0;">
+            Tiket Reservasi Kelas Anda
+          </h1>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
+            Daftar sesi studio yang Anda pesan. Harap hadir di studio 15 menit sebelum kelas dimulai.
+          </p>
+        </div>
+
+        <div>
+          <a href="/jadwal" class="btn-primary" style="text-decoration: none; font-size: 0.85rem; padding: 10px 16px; display: flex; align-items: center; gap: 6px;">
+            <Icon name="calendar-check" size="1rem" /> + Pesan Kelas Studio
+          </a>
+        </div>
+      </div>
+
+      {tiketList.length === 0 ? (
+        <div class="surface-card" style="padding: 3rem; text-align: center;">
+          <Icon name="ticket" size="2.5rem" style="color: var(--text-subtle); margin-bottom: 1rem;" />
+          <h3 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; margin: 0 0 6px;">
+            Belum Ada Tiket Kelas
+          </h3>
+          <p style="font-size: 0.88rem; color: var(--text-muted); max-width: 420px; margin: 0 auto 1.5rem;">
+            Anda belum memesan sesi studio. Silakan jelajahi jadwal kelas yoga, reformer pilates, atau sound healing yang tersedia.
+          </p>
+          <a href="/jadwal" class="btn-primary" style="padding: 10px 20px; text-decoration: none;">
+            Lihat Jadwal Kelas Studio
+          </a>
+        </div>
+      ) : (
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          {tiketList.map((t) => {
+            const isConfirmed = t.status_reservasi === 'dipesan';
+            const isAttended = t.status_reservasi === 'hadir';
+            const isCancelled = t.status_reservasi === 'dibatalkan' || t.status_reservasi === 'kedaluwarsa';
+            const isPending = t.status_reservasi === 'menunggu_pembayaran';
+
+            const startStr = new Date(t.waktu_mulai).toLocaleDateString('id-ID', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            });
+            const timeStr = `${new Date(t.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} – ${new Date(t.waktu_selesai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`;
+
+            return (
+              <div class="surface-card" style="padding: 1.5rem 1.75rem; display: flex; flex-direction: column; gap: 1rem;">
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 0.75rem;">
+                  <div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                      <span style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; color: var(--color-primary); background: #FAF8F5; border: 1px solid var(--border-hairline); padding: 2px 8px; border-radius: var(--radius-sm);">
+                        {t.kode_reservasi}
+                      </span>
+                      <span style="font-size: 0.75rem; color: var(--text-subtle); text-transform: uppercase;">
+                        {t.kategori} • {t.ruangan}
+                      </span>
+                    </div>
+
+                    <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin: 0 0 4px;">
+                      {t.judul_sesi}
+                    </h3>
+
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">
+                      Waktu Sesi: <strong>{startStr}, {timeStr}</strong> • Instruktur: <strong>{t.instruktur}</strong>
+                    </div>
+                  </div>
+
+                  <div style="text-align: right;">
+                    <div style="font-family: var(--font-mono); font-size: 1.15rem; font-weight: 800; color: var(--color-primary);">
+                      Rp {t.harga_dikenakan.toLocaleString('id-ID')}
+                    </div>
+                    <div style="font-size: 0.72rem; color: var(--text-subtle); margin-top: 2px;">
+                      Tarif: <strong>{t.tipe_tarif.toUpperCase()}</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- STATUS TIKET & TOMBOL BATAL -->
+                <div style="border-top: 1px dashed var(--border-hairline); padding-top: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    {isConfirmed && <span class="pill-tag pill-tag--green">TIKET SAH (TERPESAN)</span>}
+                    {isAttended && <span class="pill-tag pill-tag--green">SUDAH HADIR DI STUDIO</span>}
+                    {isPending && <span class="pill-tag pill-tag--brass">MENUNGGU PEMBAYARAN (15M)</span>}
+                    {isCancelled && <span style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; color: #721C24; background: #FDEDED; border: 1px solid #F5C6CB; padding: 3px 8px; border-radius: var(--radius-sm);">DIBATALKAN</span>}
+                  </div>
+
+                  <div style="font-size: 0.75rem; color: var(--text-subtle);">
+                    {isConfirmed && (
+                      <span>
+                        Batas pembatalan mandiri: <strong>{t.batas_batal_jam} jam</strong> sebelum sesi.
+                      </span>
+                    )}
+                    {isAttended && <span>Kehadiran Anda telah diverifikasi oleh pelatih di pintu studio.</span>}
+                  </div>
+
+                  {t.canCancel && (
+                    <form method="POST" action={actions.batalkanReservasi} onsubmit="return confirm('Apakah Anda yakin ingin membatalkan tiket reservasi ini? Kursi Anda akan dikembalikan ke publik.');">
+                      <input type="hidden" name="reservasiId" value={t.id} />
+                      <button
+                        type="submit"
+                        class="btn-secondary"
+                        style="color: #721C24; border-color: #F5C6CB; padding: 6px 12px; font-size: 0.75rem; font-weight: 700;"
+                      >
+                        Batalkan Reservasi Mandiri
+                      </button>
+                    </form>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  )}
+
+</DashboardLayout>

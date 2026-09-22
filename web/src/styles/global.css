@@ -1484,9 +1484,9 @@ img {
 .class-card {
   padding: 1.5rem 1.75rem;
   display: grid;
-  grid-template-columns: 180px 1fr 220px;
-  gap: 1.5rem;
-  align-items: center;
+  grid-template-columns: 180px 1fr 240px;
+  gap: 1.75rem;
+  align-items: stretch;
 }
 
 .class-col-time {
@@ -1595,45 +1595,101 @@ img {
 .class-col-action {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   justify-content: space-between;
-  text-align: right;
+  align-items: stretch;
   height: 100%;
-  gap: 1rem;
+  gap: 1.15rem;
 }
 
-.trainer-pill {
+.trainer-badge {
   display: flex;
   align-items: center;
-  gap: 8px;
-  text-align: right;
+  gap: 12px;
+  background: #FAF8F5;
+  border: 1px solid var(--border-hairline);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), inset 0 1px 0 #FFF;
+  text-align: left;
+  box-sizing: border-box;
+  width: 100%;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.trainer-badge:hover {
+  border-color: var(--color-brass);
+  background: #FFF;
+  box-shadow: 0 3px 10px rgba(196, 155, 88, 0.12), inset 0 1px 0 #FFF;
 }
 
 .trainer-avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
   border-radius: 50%;
+  background: var(--color-primary);
+  border: 1.5px solid var(--color-brass);
+  color: #FAF8F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 5px rgba(33, 61, 44, 0.2);
+  flex-shrink: 0;
+}
+
+.trainer-meta {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  border: 1px solid #DCD6C8;
+  gap: 1px;
+}
+
+.trainer-role-tag {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  font-weight: 800;
+  color: var(--color-brass-dark);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
 }
 
 .trainer-name {
-  font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--text-main);
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .trainer-cred {
-  font-size: 0.65rem;
-  color: var(--text-subtle);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.class-action-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: 100%;
 }
 
 .class-pricing-row {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  text-align: right;
+  width: 100%;
 }
 
 .member-free-tag {
@@ -1647,11 +1703,43 @@ img {
   margin-bottom: 2px;
 }
 
+.member-perk-hint {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--color-brass-dark);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
 .class-price-val {
   font-family: var(--font-mono);
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.class-price-unit {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--text-subtle);
+  margin-left: 2px;
+}
+
+.btn-book-cta {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  text-align: center;
 }
 
 /* Callout banner */
@@ -2311,7 +2399,7 @@ img {
     grid-template-columns: 1fr;
   }
   .class-card {
-    grid-template-columns: 140px 1fr 180px;
+    grid-template-columns: 150px 1fr 220px;
   }
   .footer-grid {
     grid-template-columns: 1fr 1fr;
@@ -2338,7 +2426,7 @@ img {
   }
   .class-card {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 1.25rem;
   }
   .class-col-time {
     border-right: none;
@@ -2346,7 +2434,7 @@ img {
     padding-bottom: 0.75rem;
   }
   .class-col-action {
-    align-items: flex-start;
+    align-items: stretch;
     text-align: left;
   }
   .footer-grid {
