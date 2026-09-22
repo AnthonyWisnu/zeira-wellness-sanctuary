@@ -53,15 +53,6 @@ const user = Astro.locals.user;
         <a href="/" class={`nav-link ${isHome ? 'nav-link--active' : ''}`}>Home</a>
         <a href="/jadwal" class={`nav-link ${isJadwal ? 'nav-link--active' : ''}`}>Jadwal</a>
         <a href="/membership" class={`nav-link ${isMembership ? 'nav-link--active' : ''}`}>Membership</a>
-        {user && user.peran === 'pelanggan' && (
-          <a href="/riwayat" class={`nav-link ${isRiwayat ? 'nav-link--active' : ''}`}>Tiket Saya</a>
-        )}
-        {user?.peran === 'pelatih' && (
-          <a href="/pelatih" class={`nav-link ${isPelatih ? 'nav-link--active' : ''}`}>Portal Pelatih</a>
-        )}
-        {user?.peran === 'admin' && (
-          <a href="/admin" class={`nav-link ${isAdmin ? 'nav-link--active' : ''}`}>Dashboard Admin</a>
-        )}
       </nav>
 
       <div class="header__actions">
@@ -89,8 +80,9 @@ const user = Astro.locals.user;
                 Portal Pelatih &rarr;
               </a>
             ) : (
-              <a href="/riwayat" class="btn-cart" aria-label="Buka Tiket Saya" title="Tiket Saya">
-                <Icon name="ticket" size="1.2rem" />
+              <a href="/riwayat" class="btn-primary" style="padding: 7px 14px; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                <Icon name="ticket" size="1.05rem" />
+                <span>Tiket Saya &rarr;</span>
               </a>
             )}
 

@@ -29,6 +29,7 @@ const todayFormatted = new Intl.DateTimeFormat('id-ID', {
 const isRoleAdmin = user.peran === 'admin';
 const isRolePelatih = user.peran === 'pelatih';
 const isRolePelanggan = user.peran === 'pelanggan';
+const dashboardHome = isRoleAdmin ? '/admin' : isRolePelatih ? '/pelatih' : '/riwayat';
 ---
 
 <!DOCTYPE html>
@@ -47,7 +48,7 @@ const isRolePelanggan = user.peran === 'pelanggan';
     <aside class="dashboard-sidebar" id="dashboardSidebar">
       <!-- BRAND / LOGO -->
       <div class="sidebar-brand">
-        <a href="/" class="brand" style="text-decoration: none;">
+        <a href={dashboardHome} class="brand" style="text-decoration: none;" title="Kembali ke Konsol Utama">
           <span class="brand__name" style="font-size: 1.15rem;">ZEIRA</span>
           <span class="brand__tag" style="font-size: 0.65rem;">CONSOLE</span>
         </a>
@@ -133,26 +134,14 @@ const isRolePelanggan = user.peran === 'pelanggan';
             <Icon name="lock-key" size="1.15rem" />
             <span>Status Member & Loker</span>
           </a>
-          <a href="/jadwal" class="nav-item">
-            <Icon name="calendar-check" size="1.15rem" />
-            <span>Pesan Kursi Studio</span>
-          </a>
-          <a href="/membership" class="nav-item">
-            <Icon name="crown" size="1.15rem" />
-            <span>Paket Membership</span>
-          </a>
         )}
 
         <div class="nav-section-divider"></div>
 
-        <div class="nav-section-title">SANCTUARY EXT</div>
-        <a href="/" class="nav-item nav-item--external">
+        <div class="nav-section-title">NAVIGASI LUAR</div>
+        <a href="/" class="nav-item nav-item--external" title="Kunjungi Halaman Depan Website Publik">
           <Icon name="arrow-square-out" size="1.05rem" />
           <span>Lihat Website Publik</span>
-        </a>
-        <a href="/jadwal" class="nav-item nav-item--external">
-          <Icon name="calendar-check" size="1.05rem" />
-          <span>Katalog Jadwal Kelas</span>
         </a>
       </nav>
 
