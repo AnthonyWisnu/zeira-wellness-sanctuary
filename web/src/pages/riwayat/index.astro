@@ -12,6 +12,13 @@ if (!user) {
 const actionResult = Astro.getActionResult(actions.batalkanReservasi);
 const tiketList = await ReservasiService.getRiwayatTiketPelanggan(user.id);
 const currentTab = Astro.url.searchParams.get('tab') || 'tiket';
+
+const formatJamMenit = (dateVal: Date | string) => {
+  const d = new Date(dateVal);
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`;
+};
 ---
 
 <DashboardLayout title="Tiket & Keanggotaan Saya" activeMenu={currentTab}>
@@ -184,7 +191,7 @@ const currentTab = Astro.url.searchParams.get('tab') || 'tiket';
           </a>
         </div>
       ) : (
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
           {tiketList.map((t) => {
             const isConfirmed = t.status_reservasi === 'dipesan';
             const isAttended = t.status_reservasi === 'hadir';
@@ -193,69 +200,104 @@ const currentTab = Astro.url.searchParams.get('tab') || 'tiket';
 
             const startStr = new Date(t.waktu_mulai).toLocaleDateString('id-ID', {
               weekday: 'long',
-              year: 'numeric',
-              month: 'long',
               day: 'numeric',
+              month: 'long',
+              year: 'numeric',
             });
-            const timeStr = `${new Date(t.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} – ${new Date(t.waktu_selesai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`;
+            const jamStr = `${formatJamMenit(t.waktu_mulai)} – ${formatJamMenit(t.waktu_selesai)} WIB`;
 
             return (
-              <div class="surface-card" style="padding: 1.5rem 1.75rem; display: flex; flex-direction: column; gap: 1rem;">
-                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 0.75rem;">
-                  <div>
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                      <span style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; color: var(--color-primary); background: #FAF8F5; border: 1px solid var(--border-hairline); padding: 2px 8px; border-radius: var(--radius-sm);">
-                        {t.kode_reservasi}
-                      </span>
-                      <span style="font-size: 0.75rem; color: var(--text-subtle); text-transform: uppercase;">
-                        {t.kategori} • {t.ruangan}
-                      </span>
+              <div class="ticket-card surface-card">
+                <!-- TOP BAR: BADGE KODE TIKET, GENRE TEGAS & HARGA -->
+                <div class="ticket-card__top">
+                  <div class="ticket-card__tags">
+                    <span class="ticket-code-badge" title="Kode Reservasi Unik">
+                      {t.kode_reservasi}
+                    </span>
+                    <span class="pill-tag pill-tag--brass ticket-genre-badge">
+                      {t.kategori}
+                    </span>
+                  </div>
+
+                  <div class="ticket-card__price-box">
+                    <div class="ticket-price">
+                      Rp {t.harga_dikenakan.toLocaleString('id-ID')}
                     </div>
+                    <span class={`ticket-rate-label ${t.tipe_tarif === 'member' ? 'ticket-rate-label--member' : ''}`}>
+                      {t.tipe_tarif === 'member' ? 'TARIF MEMBER' : 'TARIF REGULER'}
+                    </span>
+                  </div>
+                </div>
 
-                    <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin: 0 0 4px;">
-                      {t.judul_sesi}
-                    </h3>
+                <!-- JUDUL KELAS STUDIO -->
+                <h3 class="ticket-card__title">
+                  {t.judul_sesi}
+                </h3>
 
-                    <div style="font-size: 0.85rem; color: var(--text-muted);">
-                      Waktu Sesi: <strong>{startStr}, {timeStr}</strong> • Instruktur: <strong>{t.instruktur}</strong>
+                <!-- SPEC PANEL: TIAP DATA SATU BARIS BERSIH (ZERO BULLET / NO SIMBOL ANEH) -->
+                <div class="ticket-specs-panel">
+                  <!-- BARIS 1: WAKTU & JAM -->
+                  <div class="ticket-spec-row">
+                    <div class="ticket-spec-field">
+                      <span class="ticket-spec-icon"><Icon name="clock" size="1.05rem" /></span>
+                      <span class="ticket-spec-label">Waktu Sesi:</span>
+                    </div>
+                    <div class="ticket-spec-value">
+                      <span class="ticket-date-text">{startStr}</span>
+                      <span class="ticket-time-badge">{jamStr}</span>
                     </div>
                   </div>
 
-                  <div style="text-align: right;">
-                    <div style="font-family: var(--font-mono); font-size: 1.15rem; font-weight: 800; color: var(--color-primary);">
-                      Rp {t.harga_dikenakan.toLocaleString('id-ID')}
+                  <!-- BARIS 2: RUANGAN STUDIO -->
+                  <div class="ticket-spec-row">
+                    <div class="ticket-spec-field">
+                      <span class="ticket-spec-icon"><Icon name="door" size="1.05rem" /></span>
+                      <span class="ticket-spec-label">Ruangan:</span>
                     </div>
-                    <div style="font-size: 0.72rem; color: var(--text-subtle); margin-top: 2px;">
-                      Tarif: <strong>{t.tipe_tarif.toUpperCase()}</strong>
+                    <div class="ticket-spec-value">
+                      <strong class="ticket-room-name">{t.ruangan}</strong>
+                    </div>
+                  </div>
+
+                  <!-- BARIS 3: INSTRUKTUR -->
+                  <div class="ticket-spec-row">
+                    <div class="ticket-spec-field">
+                      <span class="ticket-spec-icon"><Icon name="user" size="1.05rem" /></span>
+                      <span class="ticket-spec-label">Instruktur:</span>
+                    </div>
+                    <div class="ticket-spec-value">
+                      <strong class="ticket-trainer-name">{t.instruktur}</strong>
                     </div>
                   </div>
                 </div>
 
-                <!-- STATUS TIKET & TOMBOL BATAL -->
-                <div style="border-top: 1px dashed var(--border-hairline); padding-top: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px;">
-                  <div style="display: flex; align-items: center; gap: 8px;">
+                <!-- FOOTER KARTU: STATUS & AKSI -->
+                <div class="ticket-card__footer">
+                  <div class="ticket-footer-left">
                     {isConfirmed && <span class="pill-tag pill-tag--green">TIKET SAH (TERPESAN)</span>}
                     {isAttended && <span class="pill-tag pill-tag--green">SUDAH HADIR DI STUDIO</span>}
                     {isPending && <span class="pill-tag pill-tag--brass">MENUNGGU PEMBAYARAN (15M)</span>}
-                    {isCancelled && <span style="font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; color: #721C24; background: #FDEDED; border: 1px solid #F5C6CB; padding: 3px 8px; border-radius: var(--radius-sm);">DIBATALKAN</span>}
-                  </div>
+                    {isCancelled && <span class="pill-tag pill-tag--cancelled">DIBATALKAN</span>}
 
-                  <div style="font-size: 0.75rem; color: var(--text-subtle);">
                     {isConfirmed && (
-                      <span>
+                      <span class="ticket-cancel-policy">
                         Batas pembatalan mandiri: <strong>{t.batas_batal_jam} jam</strong> sebelum sesi.
                       </span>
                     )}
-                    {isAttended && <span>Kehadiran Anda telah diverifikasi oleh pelatih di pintu studio.</span>}
+                    {isAttended && (
+                      <span class="ticket-cancel-policy">
+                        Kehadiran Anda telah diverifikasi oleh pelatih di pintu studio.
+                      </span>
+                    )}
                   </div>
 
                   {t.canCancel && (
-                    <form method="POST" action={actions.batalkanReservasi} onsubmit="return confirm('Apakah Anda yakin ingin membatalkan tiket reservasi ini? Kursi Anda akan dikembalikan ke publik.');">
+                    <form method="POST" action={actions.batalkanReservasi} onsubmit="return confirm('Apakah Anda yakin ingin membatalkan tiket reservasi ini? Kursi Anda akan dikembalikan ke publik.');" style="margin: 0;">
                       <input type="hidden" name="reservasiId" value={t.id} />
                       <button
                         type="submit"
-                        class="btn-secondary"
-                        style="color: #721C24; border-color: #F5C6CB; padding: 6px 12px; font-size: 0.75rem; font-weight: 700;"
+                        class="ticket-cancel-btn"
+                        title="Batalkan tiket sebelum batas waktu berakhir"
                       >
                         Batalkan Reservasi Mandiri
                       </button>
@@ -271,3 +313,245 @@ const currentTab = Astro.url.searchParams.get('tab') || 'tiket';
   )}
 
 </DashboardLayout>
+
+<style>
+  /* TICKET CARD STYLING */
+  .ticket-card {
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+    background: #FAF8F5;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 8px rgba(28, 48, 36, 0.04);
+    transition: all 0.2s ease;
+  }
+
+  .ticket-card:hover {
+    border-color: rgba(28, 48, 36, 0.25);
+    box-shadow: 0 4px 14px rgba(28, 48, 36, 0.07);
+  }
+
+  .ticket-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .ticket-card__tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .ticket-code-badge {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    background: #FFFFFF;
+    border: 1.5px solid rgba(28, 48, 36, 0.18);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.06em;
+  }
+
+  .ticket-genre-badge {
+    font-family: var(--font-body);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+  }
+
+  .ticket-card__price-box {
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .ticket-price {
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    line-height: 1.1;
+  }
+
+  .ticket-rate-label {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 3px;
+  }
+
+  .ticket-rate-label--member {
+    color: var(--color-brass-dark);
+    font-weight: 800;
+  }
+
+  .ticket-card__title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  /* SPECS PANEL PER-ROW */
+  .ticket-specs-panel {
+    background: #FFFFFF;
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .ticket-spec-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px dashed rgba(28, 48, 36, 0.08);
+  }
+
+  .ticket-spec-row:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .ticket-spec-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 140px;
+    min-width: 140px;
+  }
+
+  .ticket-spec-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+  }
+
+  .ticket-spec-label {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ticket-spec-value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    color: var(--text-main);
+    font-size: 0.9rem;
+  }
+
+  .ticket-date-text {
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .ticket-time-badge {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--color-primary);
+    background: #FAF8F5;
+    border: 1px solid rgba(28, 48, 36, 0.16);
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+  }
+
+  .ticket-room-name {
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .ticket-trainer-name {
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  /* FOOTER */
+  .ticket-card__footer {
+    border-top: 1px dashed var(--border-hairline);
+    padding-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .ticket-footer-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .pill-tag--cancelled {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #721C24;
+    background: #FDEDED;
+    border: 1px solid #F5C6CB;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+  }
+
+  .ticket-cancel-policy {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+  }
+
+  .ticket-cancel-btn {
+    background: #FDEDED;
+    color: #721C24;
+    border: 1.5px solid #F5C6CB;
+    padding: 7px 14px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: var(--font-body);
+  }
+
+  .ticket-cancel-btn:hover {
+    background: #F8D7DA;
+    border-color: #D32F2F;
+    color: #491217;
+  }
+
+  @media (max-width: 640px) {
+    .ticket-spec-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .ticket-spec-field {
+      width: auto;
+      min-width: auto;
+    }
+  }
+</style>
