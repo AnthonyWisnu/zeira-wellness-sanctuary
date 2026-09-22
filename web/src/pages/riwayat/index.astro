@@ -14,10 +14,13 @@ const tiketList = await ReservasiService.getRiwayatTiketPelanggan(user.id);
 const currentTab = Astro.url.searchParams.get('tab') || 'tiket';
 
 const formatJamMenit = (dateVal: Date | string) => {
-  const d = new Date(dateVal);
-  const hours = String(d.getHours()).padStart(2, '0');
-  const minutes = String(d.getMinutes()).padStart(2, '0');
-  return `${hours}:${minutes}`;
+  const d = typeof dateVal === 'string' ? new Date(dateVal) : dateVal;
+  return d.toLocaleTimeString('id-ID', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Makassar',
+  }).replace('.', ':');
 };
 ---
 
@@ -204,7 +207,7 @@ const formatJamMenit = (dateVal: Date | string) => {
               month: 'long',
               year: 'numeric',
             });
-            const jamStr = `${formatJamMenit(t.waktu_mulai)} – ${formatJamMenit(t.waktu_selesai)} WIB`;
+            const jamStr = `${formatJamMenit(t.waktu_mulai)} – ${formatJamMenit(t.waktu_selesai)} WITA`;
 
             return (
               <div class="ticket-card surface-card">
@@ -314,7 +317,7 @@ const formatJamMenit = (dateVal: Date | string) => {
 
 </DashboardLayout>
 
-<style>
+<style is:global>
   /* TICKET CARD STYLING */
   .ticket-card {
     padding: 1.5rem 1.75rem;

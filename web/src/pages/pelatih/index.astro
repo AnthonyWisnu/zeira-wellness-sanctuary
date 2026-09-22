@@ -317,46 +317,13 @@ function formatTanggalLengkap(d: Date | string): string {
     </div>
   ) : (
     <div>
-      <div class="page-header">
-        <div class="page-eyebrow">PORTAL INSTRUKTUR • AGENDA MENGAJAR</div>
-        <h1 class="page-title">Jadwal Sesi Mengajar Anda</h1>
-        <p class="page-subtitle">
-          Pantau seluruh agenda kelas studio yang Anda bimbing, alokasi ruangan, dan kuota peserta.
-        </p>
-      </div>
-
-      <!-- 4 KPI CARDS INSTRUKTUR -->
-      <div class="kpi-grid">
-        <div class="surface-card kpi-card">
-          <div class="kpi-label">TOTAL SESI KELAS</div>
-          <div class="kpi-value">{totalSesi}</div>
-          <div class="kpi-subtext">Sesi terdaftar aktif</div>
+      <div class="schedule-header-bar">
+        <h1 class="page-title" style="margin: 0;">Jadwal Sesi Mengajar Anda</h1>
+        <div class="schedule-stat-chip">
+          <span class="schedule-stat-chip__label">TOTAL SESI KELAS:</span>
+          <span class="schedule-stat-chip__val">{totalSesi}</span>
+          <span class="schedule-stat-chip__desc">Sesi Terdaftar Aktif</span>
         </div>
-
-        <div class="surface-card kpi-card">
-          <div class="kpi-label">TOTAL PESERTA DIAJAR</div>
-          <div class="kpi-value">{totalPesertaSemua}</div>
-          <div class="kpi-subtext">Tiket terkonfirmasi sah</div>
-        </div>
-
-        <div class="surface-card kpi-card">
-          <div class="kpi-label">SESI DISELESAIKAN</div>
-          <div class="kpi-value">{selesaiCount} / {totalSesi}</div>
-          <div class="kpi-subtext">Kelas tuntas terlaksana</div>
-        </div>
-
-        <div class="surface-card kpi-card">
-          <div class="kpi-label">STATUS PENUGASAN</div>
-          <div class="kpi-value kpi-value--active">● Aktif Bertugas</div>
-          <div class="kpi-subtext">Studio siap dipandu</div>
-        </div>
-      </div>
-
-      <!-- DAFTAR KARTU JADWAL MENGAJAR -->
-      <div class="section-heading">
-        <h2 class="section-title">
-          Daftar Sesi Mengajar ({jadwalList.length})
-        </h2>
       </div>
 
       {jadwalList.length === 0 ? (
@@ -467,7 +434,7 @@ function formatTanggalLengkap(d: Date | string): string {
   )}
 </DashboardLayout>
 
-<style>
+<style is:global>
   /* BREADCRUMB & BACK BUTTON */
   .back-nav-bar {
     margin-bottom: 1.25rem;

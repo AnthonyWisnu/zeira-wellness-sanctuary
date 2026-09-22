@@ -278,8 +278,15 @@ function formatTanggalSingkat(d: Date | string): string {
 
                     <div class="admin-spec-row">
                       <div class="admin-spec-key">TARIF KELAS</div>
-                      <div class="admin-spec-val">
-                        Member: <strong class="mono-val">Rp {Number(j.harga_member).toLocaleString('id-ID')}</strong> | Tamu: <strong class="mono-val">Rp {Number(j.harga_non_member).toLocaleString('id-ID')}</strong>
+                      <div class="admin-spec-val admin-rates-flex">
+                        <span class="rate-chip rate-chip--member">
+                          <span class="rate-chip__label">MEMBER:</span>
+                          <strong>Rp {Number(j.harga_member).toLocaleString('id-ID')}</strong>
+                        </span>
+                        <span class="rate-chip rate-chip--guest">
+                          <span class="rate-chip__label">TAMU:</span>
+                          <strong>Rp {Number(j.harga_non_member).toLocaleString('id-ID')}</strong>
+                        </span>
                       </div>
                     </div>
 
@@ -644,7 +651,7 @@ function formatTanggalSingkat(d: Date | string): string {
   )}
 </DashboardLayout>
 
-<style>
+<style is:global>
   /* HEADERS */
   .page-header {
     margin-bottom: 2rem;
