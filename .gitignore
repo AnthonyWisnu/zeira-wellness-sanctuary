@@ -24,6 +24,8 @@ pnpm-debug.log*
 audit_shots/
 .DS_Store
 Thumbs.db
+pgdata/
+database/pgdata/
 
 # IDE
 .idea/
