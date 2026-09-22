@@ -1,0 +1,41 @@
+---
+import fs from 'node:fs';
+import path from 'node:path';
+
+interface Props {
+  name: string;
+  weight?: 'regular' | 'bold' | 'fill' | 'light' | 'thin' | 'duotone';
+  size?: number | string;
+  class?: string;
+  style?: string;
+}
+
+const {
+  name,
+  weight = 'regular',
+  size = '1.1em',
+  class: className = '',
+  style: inlineStyle = '',
+} = Astro.props;
+
+const filename = weight === 'regular' ? `${name}.svg` : `${name}-${weight}.svg`;
+const iconPath = path.resolve(process.cwd(), `node_modules/@phosphor-icons/core/assets/${weight}/${filename}`);
+
+let svgContent = '';
+try {
+  if (fs.existsSync(iconPath)) {
+    svgContent = fs.readFileSync(iconPath, 'utf-8');
+    svgContent = svgContent.replace(
+      '<svg',
+      `<svg class="ph-icon ${className}" width="${size}" height="${size}" style="display:inline-block;vertical-align:-0.15em;flex-shrink:0;${inlineStyle}"`
+    );
+  } else {
+    // Fallback if not found
+    svgContent = `<svg class="ph-icon ${className}" width="${size}" height="${size}" viewBox="0 0 256 256"></svg>`;
+  }
+} catch (err) {
+  svgContent = `<svg class="ph-icon ${className}" width="${size}" height="${size}" viewBox="0 0 256 256"></svg>`;
+}
+---
+
+<Fragment set:html={svgContent} />

@@ -1,0 +1,446 @@
+---
+import SanctuaryLayout from '../../layouts/SanctuaryLayout.astro';
+import Icon from '../../components/Icon.astro';
+---
+
+<SanctuaryLayout
+  title="Jadwal Kelas & Sesi Studio — ZEIRA SANCTUARY"
+  description="Pilih tanggal dan amankan kursi studio Anda secara berurutan. Sistem mekanis anti-overbooking mengunci kursi Anda selama 15 menit secara real-time."
+>
+  <main class="container">
+    <!-- PAGE HEADER -->
+    <section class="schedule-page-header">
+
+      <div class="schedule-meta-bar">
+        <div>
+          <h1 class="section-heading" style="font-size: 2.5rem; margin-top: 0.5rem;">Jadwal Kelas & Sesi Studio</h1>
+          <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 650px; margin-top: 0.5rem;">
+            Pilih tanggal dan amankan kursi Anda secara berurutan. Sistem mekanis kami mengunci kursi Anda selama 15 menit secara real-time tanpa risiko tumpang tindih reservasi.
+          </p>
+        </div>
+
+        <div class="slot-meter-box">
+          <div class="slot-gauge-icon"><Icon name="chart-bar" size={24} /></div>
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-subtle); text-transform: uppercase;">SLOT HARIAN TERISI</div>
+            <div style="font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--text-main); line-height: 1.1;">
+              78% Terisi
+            </div>
+            <div style="font-size: 0.68rem; color: var(--text-muted);">Sisa 24 kuota reservasi</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATE PICKER ROW -->
+      <div class="date-selector-row">
+        <div class="date-selector-label">
+          <span>Pilih Hari Reservasi</span>
+          <span>Zona Waktu: WIB (Jakarta)</span>
+        </div>
+
+        <div class="date-cards-grid">
+          <div class="date-card date-card--active">
+            <div class="date-card__day">● Hari Ini</div>
+            <div class="date-card__num">24 Okt</div>
+            <div class="date-card__status">6 Sesi Tersedia</div>
+          </div>
+          <div class="date-card">
+            <div class="date-card__day">Besok</div>
+            <div class="date-card__num">25 Okt</div>
+            <div class="date-card__status">8 Sesi</div>
+          </div>
+          <div class="date-card">
+            <div class="date-card__day">Sabtu</div>
+            <div class="date-card__num">26 Okt</div>
+            <div class="date-card__status">9 Sesi</div>
+          </div>
+          <div class="date-card">
+            <div class="date-card__day">Minggu</div>
+            <div class="date-card__num">27 Okt</div>
+            <div class="date-card__status">7 Sesi</div>
+          </div>
+          <div class="date-card">
+            <div class="date-card__day">Senin</div>
+            <div class="date-card__num">28 Okt</div>
+            <div class="date-card__status">5 Sesi</div>
+          </div>
+          <div class="date-card">
+            <div class="date-card__day">Selasa</div>
+            <div class="date-card__num">29 Okt</div>
+            <div class="date-card__status">6 Sesi</div>
+          </div>
+          <div class="date-card">
+            <div class="date-card__day">Rabu</div>
+            <div class="date-card__num">30 Okt</div>
+            <div class="date-card__status">6 Sesi</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="filter-chips">
+          <button class="chip chip--active">Semua Kelas (6)</button>
+          <button class="chip">Reformer Pilates</button>
+          <button class="chip">Yoga & Breathwork</button>
+          <button class="chip">Sound Bath Healing</button>
+          <button class="chip">Cadillacs & Tower</button>
+        </div>
+
+        <div class="search-input-box">
+          <span class="search-icon"><Icon name="magnifying-glass" size={16} /></span>
+          <input type="text" class="search-input" placeholder="Cari pelatih, studio, fokus..." />
+        </div>
+      </div>
+    </section>
+
+    <!-- VERTICAL CLASS CARDS LIST -->
+    <section class="class-list">
+      
+      <!-- CLASS 1: Vinyasa Flow -->
+      <div class="surface-card class-card">
+        <div class="class-col-time">
+          <div class="class-time-tag">Pagi Energizing</div>
+          <div class="class-time-val">07:30 <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">– 08:45</span></div>
+          <div class="class-time-sub">Durasi 75 Menit • Sesi 01</div>
+          <div class="class-room-badge">
+            <Icon name="house-line" size={14} /> Studio 01 • Zen Dome
+          </div>
+        </div>
+
+        <div class="class-col-main">
+          <div class="class-title-row">
+            <span class="pill-tag pill-tag--green">Yoga & Breathwork</span>
+            <span class="pill-tag">Semua Tingkat</span>
+          </div>
+          <h3 class="class-title">Vinyasa Flow & Pranayama</h3>
+          <p class="class-desc">
+            Penyelarasan nafas ritmis dan postur dinamis untuk membuka sirkulasi meridian, melancarkan energi pagi hari, diakhiri grounding dingin beraroma cedarwood.
+          </p>
+
+          <div class="seat-meter">
+            <div class="seat-meter-header">
+              <span style="color: var(--color-primary);">● Sisa 4 dari 16 Kursi</span>
+              <span style="color: var(--text-subtle);">75% Terisi</span>
+            </div>
+            <div class="seat-progress-track">
+              <div class="seat-progress-fill" style="width: 75%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-col-action">
+          <div class="trainer-pill">
+            <div class="trainer-avatar">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" alt="Sarah Jenkins" />
+            </div>
+            <div>
+              <div class="trainer-name">Sarah Jenkins</div>
+              <div class="trainer-cred">E-RYT 500 Yoga Alliance</div>
+            </div>
+          </div>
+
+          <div class="class-pricing-row">
+            <span class="member-free-tag">Paket Member: GRATIS</span>
+            <div class="class-price-val">Rp 175.000 <span style="font-size: 0.7rem; font-weight: 400; color: var(--text-subtle);">/sesi</span></div>
+          </div>
+
+          <button class="btn-primary" style="padding: 9px 18px; font-size: 0.82rem;" data-trigger="modal" data-class-title="Vinyasa Flow & Pranayama" data-class-price="Rp 175.000" data-trainer="Sarah Jenkins (E-RYT 500)">
+            <Icon name="lock-simple" size={15} /> Book Kursi Ini
+          </button>
+        </div>
+      </div>
+
+      <!-- CLASS 2: Dynamic Core & Posture Reformer (Hampir Penuh) -->
+      <div class="surface-card class-card" style="border-color: #DFB876;">
+        <div class="class-col-time">
+          <div class="class-time-tag" style="color: #B25900; display: inline-flex; align-items: center; gap: 4px;"><Icon name="lightning" size={14} /> Hampir Penuh</div>
+          <div class="class-time-val">10:00 <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">– 11:15</span></div>
+          <div class="class-time-sub">Durasi 75 Menit • Sesi 02</div>
+          <div class="class-room-badge">
+            <Icon name="squares-four" size={14} /> Studio 02 • Reformer Atelier
+          </div>
+        </div>
+
+        <div class="class-col-main">
+          <div class="class-title-row">
+            <span class="pill-tag" style="background: rgba(196, 155, 88, 0.15); color: #79571B;">Reformer Pilates</span>
+            <span class="pill-tag">Tingkat Menengah</span>
+          </div>
+          <h3 class="class-title">Dynamic Core & Posture Reformer</h3>
+          <p class="class-desc">
+            Akurasi stabilisasi spinal cord pada apparatus Allegro 2 Reformer. Fokus perbaikan kurvatura punggung, aktivasi transversus abdominis, dan kelenturan sendi panggul.
+          </p>
+
+          <div class="seat-meter">
+            <div class="seat-meter-header">
+              <span style="color: #B25900; font-weight: 700;">● Sisa 1 Kursi Terakhir!</span>
+              <span style="color: #B25900;">90% Terisi</span>
+            </div>
+            <div class="seat-progress-track">
+              <div class="seat-progress-fill seat-progress-fill--amber" style="width: 90%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-col-action">
+          <div class="trainer-pill">
+            <div class="trainer-avatar">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Kenji Sato" />
+            </div>
+            <div>
+              <div class="trainer-name">Kenji Sato</div>
+              <div class="trainer-cred">Polestar Certified Master</div>
+            </div>
+          </div>
+
+          <div class="class-pricing-row">
+            <span class="member-free-tag">Paket Member: GRATIS</span>
+            <div class="class-price-val">Rp 250.000 <span style="font-size: 0.7rem; font-weight: 400; color: var(--text-subtle);">/sesi</span></div>
+          </div>
+
+          <button class="btn-brass" data-trigger="modal" data-class-title="Dynamic Core & Posture Reformer" data-class-price="Rp 250.000" data-trainer="Kenji Sato (Polestar Certified Master)">
+            <Icon name="lightning" size={16} /> Amankan Kursi Terakhir
+          </button>
+        </div>
+      </div>
+
+      <!-- CLASS 3: Cadillacs Tower & Spine Alignment -->
+      <div class="surface-card class-card">
+        <div class="class-col-time">
+          <div class="class-time-tag">Siang Rejuvenasi</div>
+          <div class="class-time-val">13:30 <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">– 14:45</span></div>
+          <div class="class-time-sub">Durasi 75 Menit • Sesi 03</div>
+          <div class="class-room-badge">
+            <Icon name="squares-four" size={14} /> Studio 02 • Reformer Atelier
+          </div>
+        </div>
+
+        <div class="class-col-main">
+          <div class="class-title-row">
+            <span class="pill-tag" style="background: rgba(196, 155, 88, 0.15); color: #79571B;">Cadillacs & Tower</span>
+            <span class="pill-tag">Semua Tingkat</span>
+          </div>
+          <h3 class="class-title">Cadillacs Tower & Spine Alignment</h3>
+          <p class="class-desc">
+            Dekompresi sendi spinal dan penguatan rantai kinetik posterior menggunakan pegas resistensi apparatus Cadillacs artisan Eropa.
+          </p>
+
+          <div class="seat-meter">
+            <div class="seat-meter-header">
+              <span style="color: var(--color-primary);">● Sisa 6 dari 10 Kursi</span>
+              <span style="color: var(--text-subtle);">40% Terisi</span>
+            </div>
+            <div class="seat-progress-track">
+              <div class="seat-progress-fill" style="width: 40%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-col-action">
+          <div class="trainer-pill">
+            <div class="trainer-avatar">
+              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Dian Arisandi" />
+            </div>
+            <div>
+              <div class="trainer-name">Dian Arisandi</div>
+              <div class="trainer-cred">BASI Pilates™ Certified</div>
+            </div>
+          </div>
+
+          <div class="class-pricing-row">
+            <span class="member-free-tag">Paket Member: GRATIS</span>
+            <div class="class-price-val">Rp 280.000 <span style="font-size: 0.7rem; font-weight: 400; color: var(--text-subtle);">/sesi</span></div>
+          </div>
+
+          <button class="btn-primary" style="padding: 9px 18px; font-size: 0.82rem;" data-trigger="modal" data-class-title="Cadillacs Tower & Spine Alignment" data-class-price="Rp 280.000" data-trainer="Dian Arisandi (BASI Certified)">
+            <Icon name="lock-simple" size={15} /> Book Kursi Ini
+          </button>
+        </div>
+      </div>
+
+      <!-- CLASS 4: Spine Mobility & Athletic Reformer -->
+      <div class="surface-card class-card">
+        <div class="class-col-time">
+          <div class="class-time-tag">Sore Intensif</div>
+          <div class="class-time-val">16:30 <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">– 17:45</span></div>
+          <div class="class-time-sub">Durasi 75 Menit • Sesi 04</div>
+          <div class="class-room-badge">
+            <Icon name="squares-four" size={14} /> Studio 02 • Reformer Atelier
+          </div>
+        </div>
+
+        <div class="class-col-main">
+          <div class="class-title-row">
+            <span class="pill-tag" style="background: rgba(196, 155, 88, 0.15); color: #79571B;">Reformer Pilates</span>
+            <span class="pill-tag pill-tag--orange">Lanjutan</span>
+          </div>
+          <h3 class="class-title">Spine Mobility & Athletic Reformer</h3>
+          <p class="class-desc">
+            Tantangan kekuatan eksentrik, lompatan jumpboard bertekanan terkontrol, dan dekompresi sendi fungsional untuk olahragawan & eksekutif aktif.
+          </p>
+
+          <div class="seat-meter">
+            <div class="seat-meter-header">
+              <span style="color: var(--color-primary);">● Sisa 5 dari 8 Kursi</span>
+              <span style="color: var(--text-subtle);">38% Terisi</span>
+            </div>
+            <div class="seat-progress-track">
+              <div class="seat-progress-fill" style="width: 38%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-col-action">
+          <div class="trainer-pill">
+            <div class="trainer-avatar">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Kenji Sato" />
+            </div>
+            <div>
+              <div class="trainer-name">Kenji Sato</div>
+              <div class="trainer-cred">Polestar Master</div>
+            </div>
+          </div>
+
+          <div class="class-pricing-row">
+            <span class="member-free-tag">Paket Member: GRATIS</span>
+            <div class="class-price-val">Rp 250.000 <span style="font-size: 0.7rem; font-weight: 400; color: var(--text-subtle);">/sesi</span></div>
+          </div>
+
+          <button class="btn-primary" style="padding: 9px 18px; font-size: 0.82rem;" data-trigger="modal" data-class-title="Spine Mobility & Athletic Reformer" data-class-price="Rp 250.000" data-trainer="Kenji Sato (Polestar Master)">
+            <Icon name="lock-simple" size={15} /> Book Kursi Ini
+          </button>
+        </div>
+      </div>
+
+      <!-- CLASS 5: Candlelight Tibetan Sound Bath (Kuota Penuh) -->
+      <div class="surface-card class-card" style="opacity: 0.9;">
+        <div class="class-col-time">
+          <div class="class-time-tag">Malam Meditatif</div>
+          <div class="class-time-val">18:30 <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">– 19:45</span></div>
+          <div class="class-time-sub">Durasi 75 Menit • Sesi 05</div>
+          <div class="class-room-badge">
+            <Icon name="yin-yang" size={14} /> Studio 01 • Zen Dome
+          </div>
+        </div>
+
+        <div class="class-col-main">
+          <div class="class-title-row">
+            <span class="pill-tag pill-tag--orange">Sound Healing</span>
+            <span class="pill-tag pill-tag--red">● Kuota Penuh</span>
+          </div>
+          <h3 class="class-title">Candlelight Tibetan Sound Bath & Yin</h3>
+          <p class="class-desc">
+            Relaksasi gelombang theta mendalam dipandu 7 mangkuk kristal Tibet, gong simfoni, dan postur Yin pasif di bawah pendaran lilin-lilin lebah alami.
+          </p>
+
+          <div class="seat-meter">
+            <div class="seat-meter-header">
+              <span style="color: #BA1A1A; display: inline-flex; align-items: center; gap: 4px;"><Icon name="users" size={14} /> 2 Orang dalam Waiting List</span>
+              <span style="color: #BA1A1A; font-weight: 700;">100% Terisi (18/18)</span>
+            </div>
+            <div class="seat-progress-track">
+              <div class="seat-progress-fill seat-progress-fill--red" style="width: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-col-action">
+          <div class="trainer-pill">
+            <div class="trainer-avatar">
+              <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&q=80" alt="Maya Lin" />
+            </div>
+            <div>
+              <div class="trainer-name">Maya Lin</div>
+              <div class="trainer-cred">Sound Healing Guild</div>
+            </div>
+          </div>
+
+          <div class="class-pricing-row">
+            <span class="member-free-tag">Member: Termasuk</span>
+            <div class="class-price-val">Rp 190.000 <span style="font-size: 0.7rem; font-weight: 400; color: var(--text-subtle);">/sesi</span></div>
+          </div>
+
+          <button class="btn-secondary" style="padding: 8px 16px; font-size: 0.8rem;" onclick="alert('Anda telah terdaftar di Waiting List prioritas. Jika ada pembatalan dalam 15 menit, Anda akan menerima notifikasi SMS/WhatsApp.');">
+            <Icon name="hourglass" size={15} /> Masuk Waiting List
+          </button>
+        </div>
+      </div>
+
+      <!-- CLASS 6: Night Restorative Yoga & Sound Resonator -->
+      <div class="surface-card class-card">
+        <div class="class-col-time">
+          <div class="class-time-tag">Penutup Hari</div>
+          <div class="class-time-val">20:00 <span style="font-size: 0.8rem; font-weight: 500; color: var(--text-muted);">– 21:00</span></div>
+          <div class="class-time-sub">Durasi 60 Menit • Sesi 06</div>
+          <div class="class-room-badge">
+            <Icon name="yin-yang" size={14} /> Studio 01 • Zen Dome
+          </div>
+        </div>
+
+        <div class="class-col-main">
+          <div class="class-title-row">
+            <span class="pill-tag pill-tag--green">Yoga & Sound</span>
+            <span class="pill-tag">Sleep Prep</span>
+          </div>
+          <h3 class="class-title">Night Restorative Yoga & Sound Resonator</h3>
+          <p class="class-desc">
+            Transisi relaksasi mendalam menuju istirahat malam dengan postur yoga restoratif pasif berpenopang bolster, stimulasi sistem syaraf parasimpatis, dan alunan grounding sing-bowl.
+          </p>
+
+          <div class="seat-meter">
+            <div class="seat-meter-header">
+              <span style="color: var(--color-primary);">● Sisa 8 dari 12 Kursi</span>
+              <span style="color: var(--text-subtle);">33% Terisi</span>
+            </div>
+            <div class="seat-progress-track">
+              <div class="seat-progress-fill" style="width: 33%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="class-col-action">
+          <div class="trainer-pill">
+            <div class="trainer-avatar">
+              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=120&q=80" alt="Sarah Jenkins" />
+            </div>
+            <div>
+              <div class="trainer-name">Sarah Jenkins</div>
+              <div class="trainer-cred">E-RYT 500 Yoga Alliance</div>
+            </div>
+          </div>
+
+          <div class="class-pricing-row">
+            <span class="member-free-tag">Paket Member: GRATIS</span>
+            <div class="class-price-val">Rp 200.000 <span style="font-size: 0.7rem; font-weight: 400; color: var(--text-subtle);">/sesi</span></div>
+          </div>
+
+          <button class="btn-primary" style="padding: 9px 18px; font-size: 0.82rem;" data-trigger="modal" data-class-title="Night Restorative Yoga & Sound Resonator" data-class-price="Rp 200.000" data-trainer="Sarah Jenkins (E-RYT 500)">
+            <Icon name="lock-simple" size={15} /> Book Kursi Ini
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- CALLOUT BANNER -->
+    <div class="callout-banner">
+      <div class="callout-left">
+        <div class="callout-icon"><Icon name="ticket" size={24} /></div>
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <h4 style="font-family: var(--font-display); font-size: 1.15rem; font-weight: 700;">Non-Member? Reservasi Bebas Fleksibel</h4>
+            <span class="pill-tag pill-tag--orange">Akses Fleksibel</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; max-width: 680px;">
+            Sebagai Non-Member, Anda dapat memesan kelas satuan kapan saja tanpa ikatan komitmen bulanan. Ingin reservasi prioritas H-30 dan kuota kelas tanpa batas? Aktifkan keanggotaan Member untuk menikmati pengalaman suaka raga seutuhnya.
+          </p>
+        </div>
+      </div>
+
+      <a href="/membership" class="btn-secondary" style="white-space: nowrap;">
+        Pelajari Keanggotaan Member &rarr;
+      </a>
+    </div>
+  </main>
+</SanctuaryLayout>

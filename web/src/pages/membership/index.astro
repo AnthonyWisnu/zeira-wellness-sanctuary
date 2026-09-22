@@ -1,0 +1,457 @@
+---
+import SanctuaryLayout from '../../layouts/SanctuaryLayout.astro';
+import Icon from '../../components/Icon.astro';
+---
+
+<SanctuaryLayout
+  title="Membership Tanpa Drama — ZEIRA SANCTUARY"
+  description="Tanpa tier rumit berjenjang, tanpa biaya tersembunyi. Akses penuh ke seluruh kelas studio, dedicated RFID locker, dan privasi suaka raga."
+>
+  <main class="container">
+    <!-- PAGE HEADER -->
+    <section class="membership-header">
+      <span class="section-tag">KEANGGOTAAN SANCTUARY</span>
+      <h1 class="hero__title" style="margin-top: 0.75rem;">
+        Akses Menyeluruh. Satu Standar Kemewahan.
+      </h1>
+      <p class="hero__sub" style="max-width: 720px; margin: 1rem auto 0;">
+        Di ZEIRA, tidak ada kasta kartu atau tingkatan berjenjang. Seluruh member menikmati standar privasi, ruang gerak, dan bimbingan instruktur yang setara sejak hari pertama.
+      </p>
+    </section>
+
+    <!-- SECTION: DUAL COMPARISON CARDS (NON-MEMBER VS MEMBER) -->
+    <section>
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <span class="section-tag">KOMPARASI AKSES</span>
+        <h2 class="section-heading" style="font-size: 1.8rem;">Dua Cara Menikmati ZEIRA</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.35rem;">
+          Pilih cara berkunjung yang paling selaras dengan rutinitas dan frekuensi latihan Anda.
+        </p>
+      </div>
+
+      <div class="comparison-grid">
+        <!-- LEFT: NON-MEMBER -->
+        <div class="comparison-card">
+          <div>
+            <div class="comparison-card__header">
+              <div>
+                <span class="comparison-card__tag">OPSI FLEKSIBEL</span>
+                <h3 class="comparison-card__title">Non-Member</h3>
+                <div class="comparison-card__sub">Bayar satuan per kelas saat ingin berkunjung</div>
+              </div>
+            </div>
+
+            <div class="comparison-price-box">
+              <div class="comparison-price-label">Tarif Satuan Per Kelas</div>
+              <div class="comparison-price-val">
+                Rp 175.000 – 420.000 <span class="comparison-price-unit">/sesi</span>
+              </div>
+            </div>
+
+            <ul class="comparison-feature-list">
+              <li class="comparison-feature-item">
+                <span class="comparison-feature-icon comparison-feature-icon--check">
+                  <Icon name="check" size="1rem" weight="bold" />
+                </span>
+                <span>Bebas pesan kelas tanpa ikatan komitmen bulanan</span>
+              </li>
+              <li class="comparison-feature-item">
+                <span class="comparison-feature-icon comparison-feature-icon--check">
+                  <Icon name="check" size="1rem" weight="bold" />
+                </span>
+                <span>Akses fasilitas studio, shower, & tea lounge saat jam sesi</span>
+              </li>
+              <li class="comparison-feature-item comparison-feature-item--dim">
+                <span class="comparison-feature-icon comparison-feature-icon--minus">
+                  <Icon name="minus" size="1rem" weight="bold" />
+                </span>
+                <span>Jendela reservasi dibuka maksimal H-7 sebelum sesi dimulai</span>
+              </li>
+              <li class="comparison-feature-item comparison-feature-item--dim">
+                <span class="comparison-feature-icon comparison-feature-icon--minus">
+                  <Icon name="minus" size="1rem" weight="bold" />
+                </span>
+                <span>Fasilitas loker harian sementara selama jam sesi berlangsung</span>
+              </li>
+            </ul>
+          </div>
+
+          <a href="/jadwal" class="btn-secondary" style="width: 100%; font-size: 0.85rem;">
+            Lihat Jadwal Kelas &rarr;
+          </a>
+        </div>
+
+        <!-- RIGHT: MEMBER -->
+        <div class="comparison-card comparison-card--featured">
+          <div>
+            <div class="comparison-card__header">
+              <div>
+                <span class="comparison-card__tag comparison-card__tag--brass">AKSES PENUH</span>
+                <h3 class="comparison-card__title">Member</h3>
+                <div class="comparison-card__sub">Akses menyeluruh tanpa batas kuota kelas bulanan</div>
+              </div>
+            </div>
+
+            <div class="comparison-price-box comparison-price-box--featured">
+              <div class="comparison-price-label" style="color: var(--color-brass-dark);">Efisiensi Investasi Maksimal</div>
+              <div class="comparison-price-val" style="color: var(--color-primary);">
+                Mulai Rp 1.050.000 <span class="comparison-price-unit">/bulan</span>
+              </div>
+            </div>
+
+            <ul class="comparison-feature-list">
+              <li class="comparison-feature-item">
+                <span class="comparison-feature-icon comparison-feature-icon--check">
+                  <Icon name="check" size="1rem" weight="bold" />
+                </span>
+                <span><strong>Akses Unlimited</strong> seluruh kelas studio (Reformer, Yoga, Sound)</span>
+              </li>
+              <li class="comparison-feature-item">
+                <span class="comparison-feature-icon comparison-feature-icon--check">
+                  <Icon name="check" size="1rem" weight="bold" />
+                </span>
+                <span><strong>Priority Window Booking H-30</strong> (amankan jadwal 1 bulan di muka)</span>
+              </li>
+              <li class="comparison-feature-item">
+                <span class="comparison-feature-icon comparison-feature-icon--check">
+                  <Icon name="check" size="1rem" weight="bold" />
+                </span>
+                <span><strong>Dedicated RFID Locker</strong> pribadi tetap selama keanggotaan aktif</span>
+              </li>
+              <li class="comparison-feature-item">
+                <span class="comparison-feature-icon comparison-feature-icon--check">
+                  <Icon name="check" size="1rem" weight="bold" />
+                </span>
+                <span><strong>Perlengkapan Higienis Lengkap</strong> & handuk katun organik setiap kedatangan</span>
+              </li>
+            </ul>
+          </div>
+
+          <a href="#katalog-durasi" class="btn-primary" style="width: 100%; font-size: 0.85rem;">
+            Pilih Durasi Membership &rarr;
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: 4 DURATION PASSES -->
+    <section id="katalog-durasi" style="padding: 1rem 0 2.5rem;">
+      <div style="text-align: center; margin-bottom: 2.5rem;">
+        <span class="section-tag">PILIHAN KOMITMEN</span>
+        <h2 class="section-heading">Pilih Durasi Akses Sanctuary Anda</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;">
+          Seluruh durasi menikmati seluruh hak istimewa Member tanpa kompromi. Komitmen lebih panjang memberikan efisiensi investasi terbaik.
+        </p>
+      </div>
+
+      <div class="duration-passes-grid">
+        <!-- PASS 1: 1 BULAN -->
+        <div class="surface-card pass-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="pass-title">1 BULAN PASS</span>
+              <span class="pass-badge">Fleksibel</span>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+              Eksplorasi suaka raga tanpa komitmen jangka panjang.
+            </p>
+
+            <div class="pass-price-num">Rp 1.500.000</div>
+            <div class="pass-price-unit">/ bulan (ditagih per bulan)</div>
+
+            <ul class="pass-features-list">
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span>Akses 100% kelas unlimited</span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span>Priority window booking H-30</span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span>Dedicated RFID locker & handuk</span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span>Bebas perpanjang per bulan</span>
+              </li>
+            </ul>
+          </div>
+
+          <button class="btn-secondary" style="width: 100%; font-size: 0.85rem;" data-trigger="modal" data-class-title="Paket Member 1 Bulan" data-class-price="Rp 1.500.000" data-trainer="Sanctuary All-Inclusive">
+            Mulai Member 1 Bulan
+          </button>
+        </div>
+
+        <!-- PASS 2: 3 BULAN -->
+        <div class="surface-card pass-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="pass-title">3 BULAN PASS</span>
+              <span class="pass-badge pass-badge--orange">Hemat 10%</span>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+              Membangun ritme kebugaran dan kebiasaan transformasi.
+            </p>
+
+            <div class="pass-price-num">Rp 1.350.000</div>
+            <div class="pass-price-unit">/ bulan (Total: Rp 4.050.000 / 3 Bulan)</div>
+
+            <ul class="pass-features-list">
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span>Semua benefit Member lengkap</span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span><strong>+ 1x Guest Pass Bebas Akses</strong></span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span>Dedicated RFID locker pribadi</span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span>Handuk laundry harian terjamin</span>
+              </li>
+            </ul>
+          </div>
+
+          <button class="btn-secondary" style="width: 100%; font-size: 0.85rem;" data-trigger="modal" data-class-title="Paket Member 3 Bulan" data-class-price="Rp 4.050.000" data-trainer="Sanctuary All-Inclusive">
+            Mulai Member 3 Bulan
+          </button>
+        </div>
+
+        <!-- PASS 3: 6 BULAN (FEATURED) -->
+        <div class="surface-card pass-card pass-card--featured">
+          <div class="pass-featured-badge">Pilihan Terpopuler</div>
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+              <span class="pass-title">6 BULAN PASS</span>
+              <span class="pass-badge pass-badge--orange">Hemat 20%</span>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+              Pilihan seimbang untuk pencapaian fisik dan ketenangan optimal.
+            </p>
+
+            <div class="pass-price-num" style="color: var(--color-primary);">Rp 1.200.000</div>
+            <div class="pass-price-unit">/ bulan (Total: Rp 7.200.000 / 6 Bulan)</div>
+
+            <ul class="pass-features-list">
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span>Semua benefit Member lengkap</span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span><strong>+ 3x Guest Pass Bebas Akses</strong></span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span><strong>+ 1 Sesi Biomechanics Check-in</strong></span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span>Dedicated RFID locker pribadi tetap</span>
+              </li>
+            </ul>
+          </div>
+
+          <button class="btn-primary" style="width: 100%; font-size: 0.85rem;" data-trigger="modal" data-class-title="Paket Member 6 Bulan (Pilihan Populer)" data-class-price="Rp 7.200.000" data-trainer="Sanctuary All-Inclusive">
+            Mulai Member 6 Bulan
+          </button>
+        </div>
+
+        <!-- PASS 4: 12 BULAN -->
+        <div class="surface-card pass-card">
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="pass-title">12 BULAN PASS</span>
+              <span class="pass-badge pass-badge--green">Hemat 30%</span>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">
+              Dedikasi gaya hidup holistik penuh setahun tanpa batas.
+            </p>
+
+            <div class="pass-price-num">Rp 1.050.000</div>
+            <div class="pass-price-unit">/ bulan (Total: Rp 12.600.000 / 12 Bulan)</div>
+
+            <ul class="pass-features-list">
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span>Semua benefit Member lengkap</span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span><strong>+ 6x Guest Pass Bebas Akses</strong></span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span><strong>Dedicated VIP Cedarwood Locker</strong></span>
+              </li>
+              <li>
+                <Icon name="check" size="0.95rem" weight="bold" style="color: var(--color-primary);" />
+                <span>Evaluasi postural berkala tiap kuartal</span>
+              </li>
+            </ul>
+          </div>
+
+          <button class="btn-secondary" style="width: 100%; font-size: 0.85rem;" data-trigger="modal" data-class-title="Paket Member 12 Bulan (Akses Penuh)" data-class-price="Rp 12.600.000" data-trainer="Sanctuary All-Inclusive">
+            Mulai Member 12 Bulan
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: HAK ISTIMEWA MEMBER (ROW BY ROW LIST) -->
+    <section style="padding: 1rem 0 3.5rem;">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <span class="section-tag">HAK ISTIMEWA ANGGOTA</span>
+        <h2 class="section-heading">Standar Hak Istimewa Setiap Member</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.35rem;">
+          Dirancang untuk memberikan ketenangan pikiran, kenyamanan maksimal, dan progres latihan tanpa hambatan.
+        </p>
+      </div>
+
+      <div class="privilege-rows-container">
+        <div class="privilege-rows-list">
+          <!-- Row 1 -->
+          <div class="privilege-row">
+            <div class="privilege-row__left">
+              <div class="privilege-row__icon-box">
+                <Icon name="barbell" size={22} weight="bold" />
+              </div>
+              <div class="privilege-row__content">
+                <div class="privilege-row__title">Akses Seluruh Kelas Studio Tanpa Batas</div>
+                <p class="privilege-row__desc">
+                  Ikuti Reformer Pilates presisi, Cadillacs, Restorative Yin Yoga, Vinyasa Flow, hingga Tibetan Sound Healing tanpa batasan kuota kunjungan bulanan.
+                </p>
+              </div>
+            </div>
+            <span class="privilege-row__tag">Akses Bebas</span>
+          </div>
+
+          <!-- Row 2 -->
+          <div class="privilege-row">
+            <div class="privilege-row__left">
+              <div class="privilege-row__icon-box">
+                <Icon name="calendar-blank" size={22} weight="bold" />
+              </div>
+              <div class="privilege-row__content">
+                <div class="privilege-row__title">Priority Window Booking H-30</div>
+                <p class="privilege-row__desc">
+                  Amankan slot instruktur favorit dan jam prime-time Anda hingga satu bulan ke depan, jauh sebelum jadwal reservasi dibuka untuk umum.
+                </p>
+              </div>
+            </div>
+            <span class="privilege-row__tag">Prioritas 30 Hari</span>
+          </div>
+
+          <!-- Row 3 -->
+          <div class="privilege-row">
+            <div class="privilege-row__left">
+              <div class="privilege-row__icon-box">
+                <Icon name="lock-key" size={22} weight="bold" />
+              </div>
+              <div class="privilege-row__content">
+                <div class="privilege-row__title">Dedicated RFID Locker & Handuk Organik</div>
+                <p class="privilege-row__desc">
+                  Loker pribadi keyless beraroma kayu cedar Jepang yang aman. Lengkap dengan penyediaan handuk katun organik segar siap pakai di setiap kunjungan.
+                </p>
+              </div>
+            </div>
+            <span class="privilege-row__tag">Loker Pribadi</span>
+          </div>
+
+          <!-- Row 4 -->
+          <div class="privilege-row">
+            <div class="privilege-row__left">
+              <div class="privilege-row__icon-box">
+                <Icon name="coffee" size={22} weight="bold" />
+              </div>
+              <div class="privilege-row__content">
+                <div class="privilege-row__title">Artisan Herbal Tonic & Hydration Lounge</div>
+                <p class="privilege-row__desc">
+                  Nikmati racikan artisan herbal tea lounge, cold-pressed electrolyte tonic organik, dan infused water alkali tanpa biaya tambahan usai sesi latihan.
+                </p>
+              </div>
+            </div>
+            <span class="privilege-row__tag">Komplimen Harian</span>
+          </div>
+
+          <!-- Row 5 -->
+          <div class="privilege-row">
+            <div class="privilege-row__left">
+              <div class="privilege-row__icon-box">
+                <Icon name="chart-polar" size={22} weight="bold" />
+              </div>
+              <div class="privilege-row__content">
+                <div class="privilege-row__title">Evaluasi Biomechanics & Penyelarasan Postural</div>
+                <p class="privilege-row__desc">
+                  Sesi check-in berkala bersama instruktur bersertifikasi BASI Pilates™ untuk mengevaluasi keselarasan postural, rentang gerak, dan adaptasi fisik Anda.
+                </p>
+              </div>
+            </div>
+            <span class="privilege-row__tag">Konsultasi Berkala</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: FAQ ACCORDION -->
+    <section class="faq-section">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span class="section-tag">TRANSPARANSI TOTAL</span>
+        <h2 class="section-heading" style="font-size: 1.8rem;">Pertanyaan Seputar Membership</h2>
+      </div>
+
+      <div class="faq-list">
+        <!-- Q1 -->
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>Apakah benar-benar tidak ada tingkatan atau tier kartu lain?</span>
+            <span class="faq-chevron"><Icon name="caret-down" size={16} weight="bold" /></span>
+          </button>
+          <div class="faq-answer">
+            Ya, di ZEIRA kami menganut filosofi egalitarian luxury. Hanya ada satu status: Member Resmi. Anda tidak akan dibeda-bedakan berdasarkan warna kartu atau status tier — seluruh fasilitas studio, prioritas jadwal 30 hari, dan dedicated locker dinikmati secara setara oleh setiap member.
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>Bagaimana jika saya ingin mencoba satu kelas dulu sebelum menjadi Member?</span>
+            <span class="faq-chevron"><Icon name="caret-down" size={16} weight="bold" /></span>
+          </button>
+          <div class="faq-answer">
+            Sangat dipersilakan! Anda dapat memilih opsi Non-Member untuk kelas mana pun melalui halaman <a href="/jadwal" style="color: var(--color-primary); font-weight: 700; text-decoration: underline;">Jadwal Kelas</a>. Anda cukup membayar tiket sesi yang Anda ikuti tanpa ikatan kontrak apa pun.
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>Bagaimana cara melakukan reservasi kelas setelah menjadi Member?</span>
+            <span class="faq-chevron"><Icon name="caret-down" size={16} weight="bold" /></span>
+          </button>
+          <div class="faq-answer">
+            Setelah keanggotaan aktif, Anda dapat langsung mengunci kursi kelas favorit Anda melalui kalender jadwal hingga 30 hari ke depan. Sistem penahanan kursi 15 menit menjamin matras Anda terlindungi tanpa risiko overbooking.
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="faq-item">
+          <button type="button" class="faq-question">
+            <span>Metode pembayaran apa saja yang diterima?</span>
+            <span class="faq-chevron"><Icon name="caret-down" size={16} weight="bold" /></span>
+          </button>
+          <div class="faq-answer">
+            Kami menerima seluruh pembayaran resmi Midtrans Snap termasuk QRIS (GoPay, OVO, ShopeePay), Transfer Virtual Account (BCA, Mandiri, BNI, BRI), serta Kartu Kredit Visa/Mastercard dengan perlindungan enkripsi 256-bit dan verifikasi kriptografis aman.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</SanctuaryLayout>

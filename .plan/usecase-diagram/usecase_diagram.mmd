@@ -1,0 +1,50 @@
+%% =========================================================================
+%% USE CASE DIAGRAM SISTEM APLIKASI WEB WELLNESS CLUB
+%% Aktor: Pelanggan (Member & Tamu), Pelatih (Trainer), Administrator
+%% Format 100% Kompatibel dengan Mermaid Live (https://mermaid.live)
+%% =========================================================================
+
+flowchart LR
+    %% Aktor Sisi Kiri
+    PELANGGAN["👤 Pelanggan<br/>(Member & Tamu)"]
+
+    %% Batas Sistem (System Boundary)
+    subgraph SISTEM ["SISTEM APLIKASI WEB WELLNESS CLUB"]
+        UC_AUTH(["Autentikasi & Kelola Profil Akun Pengguna"])
+        UC_JADWAL(["Pantau Jadwal Sesi Kelas Sesuai Vision Window"])
+        UC_MEMBER(["Beli Paket Membership & Tetapkan Lemari Loker"])
+        UC_BOOKING(["Reservasi Sesi Kelas & Bayar via Midtrans Snap"])
+        UC_BATAL(["Batalkan Reservasi Mandiri Sebelum Batas Waktu"])
+        UC_ABSEN(["Pantau Jadwal Mengajar & Absensi Peserta Kelas"])
+        UC_MASTER(["Kelola Master Ruangan Studio & Lemari Loker"])
+        UC_JADWAL_ADMIN(["Kelola Jadwal Sesi Kelas Studio & Tarif Layanan"])
+        UC_LAPORAN(["Pantau Riwayat Transaksi & Laporan Keuangan"])
+    end
+
+    %% Aktor Sisi Kanan
+    PELATIH["🏋️ Pelatih<br/>(Instruktur)"]
+    ADMIN["🛡️ Administrator<br/>(Pengelola)"]
+
+    %% Hubungan Asosiasi (Undirected Lines UML)
+    PELANGGAN --- UC_AUTH
+    PELANGGAN --- UC_JADWAL
+    PELANGGAN --- UC_MEMBER
+    PELANGGAN --- UC_BOOKING
+    PELANGGAN --- UC_BATAL
+
+    UC_AUTH --- PELATIH
+    UC_ABSEN --- PELATIH
+
+    UC_AUTH --- ADMIN
+    UC_MASTER --- ADMIN
+    UC_JADWAL_ADMIN --- ADMIN
+    UC_LAPORAN --- ADMIN
+
+    %% Definisi Gaya (Styling)
+    classDef actor fill:#0f172a,stroke:#020617,stroke-width:2px,color:#ffffff,font-weight:bold
+    classDef usecase fill:#eff6ff,stroke:#2563eb,stroke-width:1.5px,color:#1e3a8a,font-weight:600
+
+    %% Penerapan Kelas & Batas Sistem
+    class PELANGGAN,PELATIH,ADMIN actor
+    class UC_AUTH,UC_JADWAL,UC_MEMBER,UC_BOOKING,UC_BATAL,UC_ABSEN,UC_MASTER,UC_JADWAL_ADMIN,UC_LAPORAN usecase
+    style SISTEM fill:#f8fafc,stroke:#475569,stroke-width:2px,color:#0f172a,font-weight:bold

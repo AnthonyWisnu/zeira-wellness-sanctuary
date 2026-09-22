@@ -1,0 +1,367 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "ZEIRA SANCTUARY — Ketenangan Pikiran & Presisi Gerak",
+  description = "Studio mindful movement eksklusif di Batavia: Reformer Pilates presisi, Cadillacs apparatus, Sound Healing holistik, dan Restorative Yoga dengan sistem reservasi anti-overbooking transparan."
+} = Astro.props;
+
+const pathname = Astro.url.pathname;
+const isHome = pathname === "/" || pathname === "";
+const isJadwal = pathname.startsWith("/jadwal");
+const isMembership = pathname.startsWith("/membership");
+---
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+
+  <!-- OpenGraph Metadata for WhatsApp, Instagram, and Social Scrapers -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={Astro.url.href} />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80" />
+
+</head>
+<body>
+
+  <!-- HEADER & NAVIGATION -->
+  <header class="header">
+    <div class="container header__inner">
+      <a href="/" class="brand">
+        <span class="brand__name">ZEIRA</span>
+        <span class="brand__tag">Sanctuary</span>
+      </a>
+
+      <nav class="nav-capsule">
+        <a href="/" class={`nav-link ${isHome ? 'nav-link--active' : ''}`}>Home</a>
+        <a href="/jadwal" class={`nav-link ${isJadwal ? 'nav-link--active' : ''}`}>Jadwal Kelas</a>
+        <a href="/membership" class={`nav-link ${isMembership ? 'nav-link--active' : ''}`}>Membership</a>
+      </nav>
+
+      <div class="header__actions">
+        <div class="status-badge">
+          <span class="status-badge__dot"></span>
+          <span>STATUS: MEMBER</span>
+        </div>
+        <button class="btn-cart" data-trigger="modal" data-class-title="Dynamic Reformer Level 1–2" data-class-price="Rp 350.000" data-trainer="Sarah Renata (BASI Certified)" aria-label="Buka Keranjang Reservasi" title="Keranjang Reservasi">
+          <Icon name="shopping-bag" size="1.2rem" />
+          <span class="cart-badge">1</span>
+        </button>
+        <div class="user-avatar">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="User Avatar" />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT SLOT -->
+  <slot />
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <!-- Col 1 -->
+        <div>
+          <div class="brand" style="margin-bottom: 0.75rem;">
+            <span class="brand__name">ZEIRA</span>
+            <span class="brand__tag">Sanctuary Guild</span>
+          </div>
+          <p class="footer-text">
+            Suaka holistik kurasi premium untuk peremajaan raga, kesadaran batin, dan keanggunan gaya hidup organik di pusat metropolitan.
+          </p>
+          <div style="margin-top: 1.25rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-primary); font-weight: 700; display: flex; align-items: center; gap: 6px;">
+            <Icon name="shield-check" size="1rem" /> AUTHENTICITY SEAL • Est. 2024 • Batavia Certified
+          </div>
+        </div>
+
+        <!-- Col 2 -->
+        <div>
+          <div class="footer-col-title">Jam Operasional Studio</div>
+          <div style="background: #FAF8F5; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-hairline);">
+            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-subtle); text-transform: uppercase;">Senin — Minggu</div>
+            <div style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin: 2px 0;">06:00 – 21:30 WIB</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">Reservasi ditutup 45 menit sebelum sesi penutup harian.</div>
+          </div>
+        </div>
+
+        <!-- Col 3 -->
+        <div>
+          <div class="footer-col-title">Navigasi</div>
+          <ul class="footer-links">
+            <li><a href="/">Beranda Utama</a></li>
+            <li><a href="/jadwal">Jadwal Kelas Studio</a></li>
+            <li><a href="/membership">Keanggotaan Sanctuary</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4 -->
+        <div>
+          <div class="footer-col-title">Keamanan & Transaksi</div>
+          <div class="midtrans-shield-card">
+            <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.8rem; color: var(--color-primary);">
+              <Icon name="shield-check" weight="fill" size="1.1rem" /> Midtrans Verified
+            </div>
+            <p style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; line-height: 1.4;">
+              Enkripsi 256-bit transaksi pemesanan sesi dan keanggotaan aman terlindungi.
+            </p>
+          </div>
+          <div style="margin-top: 0.75rem; font-size: 0.72rem; color: var(--text-subtle);">
+            Concierge: concierge@zeirawellness.id
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2024 ZEIRA Wellness Club. Hak Cipta Dilindungi Undang-Undang.</div>
+        <div class="footer-bottom-links">
+          <a href="#">PRIVASI</a>
+          <a href="#">KETENTUAN LAYANAN</a>
+          <a href="#">STANDAR KEBERSIHAN</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CHECKOUT MODAL POPUP (15-MINUTE SEAT LOCK & MIDTRANS SNAP DEMO) -->
+  <div class="modal-overlay" id="checkout-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" id="modal-close">&times;</button>
+      
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="pill-tag pill-tag--green">Sistem Kunci Kursi</span>
+        <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-subtle);">PostgreSQL Lock</span>
+      </div>
+
+      <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; margin: 6px 0 2px;" id="modal-class-title">
+        Dynamic Reformer Level 1–2
+      </h3>
+      <div style="font-size: 0.8rem; color: var(--text-muted);" id="modal-trainer">
+        Bersama Sarah Renata (BASI Certified)
+      </div>
+
+      <!-- 15-Minute Countdown Banner -->
+      <div class="modal-countdown-banner">
+        <Icon name="timer" size="1.4rem" weight="bold" />
+        <div>
+          <div>Kursi Anda ditahan sementara: <span class="countdown-timer" id="countdown-timer">14:59</span></div>
+          <div style="font-size: 0.68rem; opacity: 0.85;">Kursi akan dilepaskan otomatis jika checkout tidak selesai.</div>
+        </div>
+      </div>
+
+      <!-- Price Breakdown -->
+      <div style="background: #F2EFE9; padding: 12px 16px; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">
+          <span>Tarif Sesi Studio:</span>
+          <span style="font-family: var(--font-mono); font-weight: 600;" id="modal-price">Rp 350.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">
+          <span>Biaya Layanan:</span>
+          <span style="font-family: var(--font-mono); font-weight: 600; color: var(--color-primary);">GRATIS (Nett)</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 800; padding-top: 8px; border-top: 1px dashed #D5CEBF; margin-top: 4px;">
+          <span>Total Tagihan:</span>
+          <span style="font-family: var(--font-mono); color: var(--color-primary);" id="modal-total">Rp 350.000</span>
+        </div>
+      </div>
+
+      <!-- Payment Methods Simulation (Midtrans Snap) -->
+      <div style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-subtle); margin-bottom: 6px;">
+        Pilih Metode Pembayaran (Midtrans Snap):
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 1.5rem;">
+        <label style="background: #FFF; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); padding: 8px 10px; display: flex; align-items: center; gap: 8px; font-size: 0.78rem; cursor: pointer;">
+          <input type="radio" name="payment" checked />
+          <span>QRIS (Instant)</span>
+        </label>
+        <label style="background: #FFF; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); padding: 8px 10px; display: flex; align-items: center; gap: 8px; font-size: 0.78rem; cursor: pointer;">
+          <input type="radio" name="payment" />
+          <span>BCA Virtual Acc</span>
+        </label>
+        <label style="background: #FFF; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); padding: 8px 10px; display: flex; align-items: center; gap: 8px; font-size: 0.78rem; cursor: pointer;">
+          <input type="radio" name="payment" />
+          <span>Mandiri VA</span>
+        </label>
+        <label style="background: #FFF; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); padding: 8px 10px; display: flex; align-items: center; gap: 8px; font-size: 0.78rem; cursor: pointer;">
+          <input type="radio" name="payment" />
+          <span>Credit Card</span>
+        </label>
+      </div>
+
+      <button class="btn-primary" style="width: 100%;" id="btn-pay-modal">
+        Bayar Sekarang & Konfirmasi Kursi
+      </button>
+    </div>
+  </div>
+
+  <!-- CLIENT-SIDE INTERACTION SCRIPT (Zero external JS frameworks) -->
+  <script is:inline>
+    // Modal & 15-Minute Countdown
+    let countdownInterval = null;
+
+    function initModal() {
+      const modalOverlay = document.getElementById('checkout-modal');
+      const closeBtn = document.getElementById('modal-close');
+      const triggerBtns = document.querySelectorAll('.btn-reservasi, .btn-book-sm, .btn-sesi-lock, .btn-brass, [data-trigger="modal"]');
+      const payBtn = document.getElementById('btn-pay-modal');
+
+      if (!modalOverlay) return;
+
+      triggerBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const title = btn.getAttribute('data-class-title') || 'Dynamic Core Reformer';
+          const price = btn.getAttribute('data-class-price') || 'Rp 250.000';
+          const trainer = btn.getAttribute('data-trainer') || 'Kenji Sato (Polestar Master)';
+          
+          const modalTitleEl = document.getElementById('modal-class-title');
+          const modalPriceEl = document.getElementById('modal-price');
+          const modalTotalEl = document.getElementById('modal-total');
+          const modalTrainerEl = document.getElementById('modal-trainer');
+          
+          if (modalTitleEl) modalTitleEl.textContent = title;
+          if (modalPriceEl) modalPriceEl.textContent = price;
+          if (modalTotalEl) modalTotalEl.textContent = price;
+          if (modalTrainerEl) modalTrainerEl.textContent = trainer;
+
+          modalOverlay.classList.add('active');
+          startCountdown(15 * 60);
+        });
+      });
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          modalOverlay.classList.remove('active');
+          clearInterval(countdownInterval);
+        });
+      }
+
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+          modalOverlay.classList.remove('active');
+          clearInterval(countdownInterval);
+        }
+      });
+
+      if (payBtn) {
+        payBtn.addEventListener('click', () => {
+          alert('Simulasi Midtrans: Pembayaran berhasil terverifikasi via SHA-512 Webhook! Kursi resmi terkonfirmasi.');
+          modalOverlay.classList.remove('active');
+          clearInterval(countdownInterval);
+        });
+      }
+    }
+
+    function startCountdown(duration) {
+      let timer = duration;
+      const timerEl = document.getElementById('countdown-timer');
+      if (!timerEl) return;
+
+      clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        const minutes = Math.floor(timer / 60);
+        const seconds = timer % 60;
+
+        timerEl.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (--timer < 0) {
+          clearInterval(countdownInterval);
+          timerEl.textContent = "00:00 (Kedaluwarsa)";
+          alert("Waktu penahanan kursi 15 menit telah habis. Kursi telah dilepaskan otomatis ke sistem.");
+        }
+      }, 1000);
+    }
+
+    // FAQ Accordion
+    function initFaq() {
+      const faqItems = document.querySelectorAll('.faq-item');
+      faqItems.forEach(item => {
+        const questionBtn = item.querySelector('.faq-question');
+        if (!questionBtn) return;
+        questionBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const isActive = item.classList.contains('active');
+          faqItems.forEach(i => i.classList.remove('active'));
+          if (!isActive) {
+            item.classList.add('active');
+          }
+        });
+      });
+    }
+
+    // Date Selector Tabs (Jadwal Page)
+    function initDateTabs() {
+      const dateCards = document.querySelectorAll('.date-card');
+      dateCards.forEach(card => {
+        card.addEventListener('click', () => {
+          dateCards.forEach(c => c.classList.remove('date-card--active'));
+          card.classList.add('date-card--active');
+        });
+      });
+    }
+
+    // Category Filter Chips (Jadwal Page)
+    function initFilterChips() {
+      const chips = document.querySelectorAll('.chip');
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          chips.forEach(c => c.classList.remove('chip--active'));
+          chip.classList.add('chip--active');
+        });
+      });
+    }
+
+    // Passbook Duration Tabs (Home Page)
+    function initPassbookTabs() {
+      const tabBtns = document.querySelectorAll('.passbook-tab-btn');
+      const priceVal = document.getElementById('passbook-price-display');
+      
+      const prices = {
+        '1 Bln': 'Rp 1.850.000',
+        '3 Bln': 'Rp 1.650.000',
+        '6 Bln': 'Rp 1.450.000',
+        '12 Bln': 'Rp 1.250.000'
+      };
+
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabBtns.forEach(b => b.classList.remove('passbook-tab-btn--active'));
+          btn.classList.add('passbook-tab-btn--active');
+          const term = btn.textContent.trim();
+          if (priceVal && prices[term]) {
+            priceVal.textContent = prices[term] + ' /bln';
+          }
+        });
+      });
+    }
+
+    // Setup on page load
+    function setupAll() {
+      initModal();
+      initFaq();
+      initDateTabs();
+      initFilterChips();
+      initPassbookTabs();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupAll);
+    } else {
+      setupAll();
+    }
+  </script>
+</body>
+</html>
