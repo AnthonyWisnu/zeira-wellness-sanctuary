@@ -1,7 +1,6 @@
 /* ==============================================================================
-   ZEIRA SANCTUARY GUILD — TACTILE ATELIER SKEUOMORPHIC STYLESHEET
-   Based on .plan/design/sanctuary_tactile_atelier/DESIGN.md
-   Zero external CSS frameworks. Pure, sub-pixel crafted, high-DPI CSS.
+   ZEIRA WELLNESS SANCTUARY — TACTILE ATELIER SKEUOMORPHIC STYLESHEET
+   Pure Baremetal CSS Design System | Zero Framework Overhead | Pure Craft
    ============================================================================== */
 
 /* ==============================================================================
@@ -1045,16 +1044,42 @@ img {
   color: #900B09;
 }
 
+.schedule-category-row {
+  margin-bottom: 2px;
+}
+
+.schedule-category-tag {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-primary);
+}
+
 .schedule-class-name {
   font-family: var(--font-body);
   font-size: 0.95rem;
   font-weight: 700;
   color: var(--text-main);
+  line-height: 1.25;
 }
 
-.schedule-instructor {
-  font-size: 0.75rem;
+.schedule-sub-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-top: 3px;
+}
+
+.schedule-sub-trainer {
+  font-size: 0.76rem;
   color: var(--text-muted);
+}
+
+.schedule-sub-room {
+  font-size: 0.72rem;
+  color: var(--text-subtle);
 }
 
 .schedule-price-col {
@@ -1511,7 +1536,7 @@ img {
 .class-card {
   padding: 1.5rem 1.75rem;
   display: grid;
-  grid-template-columns: 180px 1fr 240px;
+  grid-template-columns: 190px 1fr 200px;
   gap: 1.75rem;
   align-items: stretch;
 }
@@ -1519,12 +1544,15 @@ img {
 .class-col-time {
   border-right: 1px solid var(--border-hairline);
   padding-right: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .class-time-tag {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 800;
   text-transform: uppercase;
   color: var(--color-brass-dark);
   letter-spacing: 0.05em;
@@ -1545,20 +1573,33 @@ img {
   margin-top: 2px;
 }
 
-.class-room-badge {
+.class-venue-meta {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.class-venue-room {
   display: flex;
   align-items: center;
-  gap: 5px;
-  margin-top: 1rem;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.class-venue-floor {
   font-size: 0.72rem;
-  color: var(--text-subtle);
-  font-family: var(--font-mono);
+  color: var(--text-muted);
+  padding-left: 20px;
 }
 
 .class-col-main {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 
 .class-title-row {
@@ -1575,24 +1616,80 @@ img {
   color: var(--text-main);
 }
 
-.class-desc {
-  font-size: 0.83rem;
+.class-instructor-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #FAF8F5;
+  border: 1px solid var(--border-hairline);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  width: fit-content;
+}
+
+.trainer-avatar-sm {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #FAF8F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.72rem;
+}
+
+.trainer-info-sm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  flex-wrap: wrap;
+}
+
+.trainer-label-sm {
+  color: var(--text-subtle);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.trainer-name-sm {
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.trainer-dot {
+  color: #C0B9AD;
+  font-size: 0.75rem;
+}
+
+.trainer-spec-sm {
   color: var(--text-muted);
-  line-height: 1.5;
+  font-size: 0.75rem;
+}
+
+.class-cancel-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 /* Progress bar seats */
 .seat-meter {
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 .seat-meter-header {
   display: flex;
   justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .seat-progress-track {
@@ -1626,82 +1723,8 @@ img {
   align-items: stretch;
   height: 100%;
   gap: 1.15rem;
-}
-
-.trainer-badge {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #FAF8F5;
-  border: 1px solid var(--border-hairline);
-  padding: 8px 12px;
-  border-radius: var(--radius-md);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), inset 0 1px 0 #FFF;
-  text-align: left;
-  box-sizing: border-box;
-  width: 100%;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.trainer-badge:hover {
-  border-color: var(--color-brass);
-  background: #FFF;
-  box-shadow: 0 3px 10px rgba(196, 155, 88, 0.12), inset 0 1px 0 #FFF;
-}
-
-.trainer-avatar {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  border: 1.5px solid var(--color-brass);
-  color: #FAF8F5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 0.95rem;
-  box-shadow: 0 2px 5px rgba(33, 61, 44, 0.2);
-  flex-shrink: 0;
-}
-
-.trainer-meta {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  gap: 1px;
-}
-
-.trainer-role-tag {
-  font-family: var(--font-mono);
-  font-size: 0.58rem;
-  font-weight: 800;
-  color: var(--color-brass-dark);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  line-height: 1;
-}
-
-.trainer-name {
-  font-family: var(--font-display);
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-main);
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.trainer-cred {
-  font-size: 0.68rem;
-  color: var(--text-muted);
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  border-left: 1px solid var(--border-hairline);
+  padding-left: 1.5rem;
 }
 
 .class-action-bottom {
@@ -2052,6 +2075,143 @@ img {
   align-items: flex-start;
   gap: 8px;
   line-height: 1.4;
+}
+
+/* Locker Bay Panel & Grid */
+.locker-bay-panel {
+  background: #FAF8F5;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.locker-bay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.locker-bay-title {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--text-main);
+}
+
+.locker-bay-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.locker-bay-legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.locker-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.locker-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.locker-legend-dot--available {
+  background: #1B5E20;
+}
+
+.locker-legend-dot--occupied {
+  background: #A0988E;
+}
+
+.locker-bay-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.locker-tile {
+  background: #FFF;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.locker-tile--available {
+  border-color: #D5CEBF;
+}
+
+.locker-tile--available:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(33, 61, 44, 0.08);
+}
+
+.locker-tile--occupied {
+  background: #F3EFEA;
+  border-color: #E2DDD5;
+  opacity: 0.7;
+}
+
+.locker-tile-num {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.1;
+}
+
+.locker-tile-area {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.locker-tile-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.locker-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.locker-status-dot--green {
+  background: #1B5E20;
+}
+
+.locker-status-dot--muted {
+  background: #8C827A;
+}
+
+@media (max-width: 640px) {
+  .locker-bay-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* Privilege Rows List (Replaces 3x2 card grid - Clean Row by Row) */
@@ -2463,6 +2623,10 @@ img {
   .class-col-action {
     align-items: stretch;
     text-align: left;
+    border-left: none;
+    border-top: 1px solid var(--border-hairline);
+    padding-left: 0;
+    padding-top: 1rem;
   }
   .footer-grid {
     grid-template-columns: 1fr;

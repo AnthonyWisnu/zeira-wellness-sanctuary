@@ -58,50 +58,26 @@ const user = Astro.locals.user;
       <div class="header__actions">
         {user ? (
           <>
-            <div class="status-badge" title={`Masuk sebagai ${user.nama_lengkap}`}>
-              <span class="status-badge__dot" style={user.isMemberAktif || user.peran === 'admin' ? 'background: #2E7D32;' : 'background: #DFB876;'}></span>
-              <span>
-                {user.peran === 'admin'
-                  ? 'ADMIN'
-                  : user.peran === 'pelatih'
-                  ? 'PELATIH'
-                  : user.isMemberAktif
-                  ? 'MEMBER AKTIF'
-                  : 'TAMU'}
-              </span>
-            </div>
-
             {user.peran === 'admin' ? (
-              <a href="/admin" class="btn-primary" style="padding: 7px 14px; font-size: 0.8rem; text-decoration: none;">
-                Admin Console &rarr;
+              <a href="/admin" class="btn-primary" style="padding: 8px 18px; font-size: 0.82rem; text-decoration: none;">
+                Portal Admin &rarr;
               </a>
             ) : user.peran === 'pelatih' ? (
-              <a href="/pelatih" class="btn-primary" style="padding: 7px 14px; font-size: 0.8rem; text-decoration: none;">
-                Portal Pelatih &rarr;
+              <a href="/pelatih" class="btn-primary" style="padding: 8px 18px; font-size: 0.82rem; text-decoration: none;">
+                Portal Instruktur &rarr;
               </a>
             ) : (
-              <a href="/riwayat" class="btn-primary" style="padding: 7px 14px; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-                <Icon name="ticket" size="1.05rem" />
-                <span>Tiket Saya &rarr;</span>
+              <a href="/riwayat" class="btn-primary" style="padding: 8px 18px; font-size: 0.82rem; text-decoration: none;">
+                Tiket & Profil &rarr;
               </a>
             )}
 
-            <a href={user.peran === 'admin' ? '/admin' : user.peran === 'pelatih' ? '/pelatih' : '/riwayat'} class="user-avatar" title={`Akun: ${user.nama_lengkap}`}>
-              <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--color-primary); color: #FAF8F5; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; border: 1px solid var(--color-primary-border);">
-                {user.nama_lengkap.charAt(0).toUpperCase()}
-              </div>
-            </a>
-
-            <a href="/logout" class="btn-cart" title="Keluar dari Akun (Logout)" aria-label="Keluar dari Akun">
-              <Icon name="sign-out" size="1.15rem" />
+            <a href="/logout" class="btn-secondary" style="padding: 7px 11px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none;" title="Keluar dari Akun">
+              <Icon name="sign-out" size="1.05rem" />
             </a>
           </>
         ) : (
-          <div class="status-badge">
-            <span class="status-badge__dot"></span>
-            <span>STATUS: TAMU</span>
-          </div>
-          <a href="/login" class="btn-primary" style="padding: 7px 16px; font-size: 0.8rem; text-decoration: none;">
+          <a href="/login" class="btn-primary" style="padding: 8px 18px; font-size: 0.82rem; text-decoration: none;">
             Masuk Akun
           </a>
         )}
@@ -120,13 +96,13 @@ const user = Astro.locals.user;
         <div>
           <div class="brand" style="margin-bottom: 0.75rem;">
             <span class="brand__name">ZEIRA</span>
-            <span class="brand__tag">Sanctuary Guild</span>
+            <span class="brand__tag">Wellness Sanctuary</span>
           </div>
           <p class="footer-text">
-            Suaka holistik kurasi premium untuk peremajaan raga, kesadaran batin, dan keanggunan gaya hidup organik di pusat metropolitan.
+            Suaka holistik kurasi premium untuk peremajaan raga, kesadaran batin, dan keanggunan gaya hidup organik.
           </p>
-          <div style="margin-top: 1.25rem; font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-primary); font-weight: 700; display: flex; align-items: center; gap: 6px;">
-            <Icon name="shield-check" size="1rem" /> AUTHENTICITY SEAL • Est. 2024 • Batavia Certified
+          <div style="margin-top: 1.25rem; font-family: var(--font-body); font-size: 0.72rem; color: var(--color-primary); font-weight: 700; display: flex; align-items: center; gap: 6px;">
+            <Icon name="shield-check" size="1rem" /> ZEIRA WELLNESS SANCTUARY • Est. 2024
           </div>
         </div>
 
@@ -134,7 +110,7 @@ const user = Astro.locals.user;
         <div>
           <div class="footer-col-title">Jam Operasional Studio</div>
           <div style="background: #FAF8F5; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-hairline);">
-            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-subtle); text-transform: uppercase;">Senin — Minggu</div>
+            <div style="font-family: var(--font-body); font-size: 0.68rem; font-weight: 700; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.04em;">Senin – Minggu</div>
             <div style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin: 2px 0;">06:00 – 21:30 WIB</div>
             <div style="font-size: 0.72rem; color: var(--text-muted);">Reservasi ditutup 45 menit sebelum sesi penutup harian.</div>
           </div>
@@ -168,7 +144,7 @@ const user = Astro.locals.user;
       </div>
 
       <div class="footer-bottom">
-        <div>© 2024 ZEIRA Wellness Club. Hak Cipta Dilindungi Undang-Undang.</div>
+        <div>© 2024 ZEIRA Wellness Sanctuary. Hak Cipta Dilindungi Undang-Undang.</div>
         <div class="footer-bottom-links">
           <a href="#">PRIVASI</a>
           <a href="#">KETENTUAN LAYANAN</a>

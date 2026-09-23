@@ -182,14 +182,11 @@ const upcomingSessions = jadwal.slice(0, 3);
     <div class="surface-card daily-schedule-box">
       <div class="schedule-header">
         <div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span class="section-tag" style="margin-bottom: 0;">PAPAN RESERVASI</span>
-            <span class="pill-tag pill-tag--green">Real-Time Sync</span>
-          </div>
+          <span class="section-tag" style="margin-bottom: 0;">PAPAN RESERVASI</span>
           <h3 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; margin-top: 4px;">Jadwal Kelas Studio Hari Ini</h3>
         </div>
-        <a href="/jadwal" style="font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: var(--color-primary); display: flex; align-items: center; gap: 4px;">
-          Buka Kalender Penuh &rarr;
+        <a href="/jadwal" class="btn-primary" style="font-size: 0.8rem; padding: 8px 16px; text-decoration: none;">
+          Menu Utama Jadwal &rarr;
         </a>
       </div>
 
@@ -208,12 +205,14 @@ const upcomingSessions = jadwal.slice(0, 3);
                 <div class="schedule-tz">WIB</div>
               </div>
               <div class="schedule-details">
-                <div class="schedule-tags">
-                  <span class="pill-tag">{sesi.ruangan.nama}</span>
-                  <span class="pill-tag pill-tag--green">{sesi.kategori.nama}</span>
+                <div class="schedule-category-row">
+                  <span class="schedule-category-tag">{sesi.kategori.nama}</span>
                 </div>
                 <div class="schedule-class-name">{sesi.judul_sesi}</div>
-                <div class="schedule-instructor">Bersama {sesi.pelatih.nama} ({sesi.pelatih.spesialisasi || 'Instructor'})</div>
+                <div class="schedule-sub-info">
+                  <div class="schedule-sub-trainer">Instruktur: {sesi.pelatih.nama}</div>
+                  <div class="schedule-sub-room">{sesi.ruangan.nama}</div>
+                </div>
               </div>
               <div class="schedule-price-col">
                 <div class="schedule-price">

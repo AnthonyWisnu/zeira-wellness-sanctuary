@@ -13,7 +13,7 @@ const actionResultMbr = Astro.getActionResult(actions.pesanMembership);
 ---
 
 <SanctuaryLayout
-  title="Membership Tanpa Drama — ZEIRA SANCTUARY"
+  title="Membership Tanpa Drama • ZEIRA SANCTUARY"
   description="Tanpa tier rumit berjenjang, tanpa biaya tersembunyi. Akses penuh ke seluruh kelas studio, dedicated RFID locker, dan privasi suaka raga."
 >
   <main class="container">
@@ -337,16 +337,16 @@ const actionResultMbr = Astro.getActionResult(actions.pesanMembership);
           </div>
         )}
 
-        <form method="POST" action={actions.pesanMembership} style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <form method="POST" action={actions.pesanMembership} style="display: flex; flex-direction: column; gap: 1.5rem;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
             <div>
               <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
                 Pilih Paket Durasi Membership
               </label>
-              <select name="paketId" required style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-hairline); border-radius: var(--radius-md); font-size: 0.88rem; background: #FAF8F5;">
+              <select name="paketId" required style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); font-size: 0.88rem; background: #FAF8F5;">
                 {paketList.map(p => (
                   <option value={p.id}>
-                    {p.nama_paket} — Rp {Number(p.harga).toLocaleString('id-ID')} ({p.durasi_hari} Hari)
+                    {p.nama_paket} • Rp {Number(p.harga).toLocaleString('id-ID')} ({p.durasi_hari} Hari)
                   </option>
                 ))}
               </select>
@@ -356,41 +356,51 @@ const actionResultMbr = Astro.getActionResult(actions.pesanMembership);
               <label style="display: block; font-size: 0.82rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">
                 Pilih Lemari Loker Pribadi (RFID Key)
               </label>
-              <select name="lokerId" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-hairline); border-radius: var(--radius-md); font-size: 0.88rem; background: #FAF8F5;">
+              <select name="lokerId" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); font-size: 0.88rem; background: #FAF8F5;">
                 <option value="">-- Pilih Nomor Loker Tersedia --</option>
                 {availableLockers.map(l => (
                   <option value={l.id}>
-                    {l.nomor_loker} ({l.lokasi_area}) — Siap Digunakan
+                    {l.nomor_loker} • {l.lokasi_area} (Tersedia)
                   </option>
                 ))}
               </select>
             </div>
           </div>
 
-          <div style="background: #FAF8F5; border: 1px solid var(--border-hairline); border-radius: var(--radius-md); padding: 14px 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="locker-bay-panel">
+            <div class="locker-bay-header">
               <div>
-                <div style="font-weight: 700; font-size: 0.9rem; color: var(--text-main);">
-                  Status Inventaris Loker Sanctuary
-                </div>
-                <div style="font-size: 0.78rem; color: var(--text-muted);">
-                  {availableLockers.length} dari {lokerList.length} loker sedang kosong dan siap disewa.
+                <div class="locker-bay-title">Denah Fisik Lemari Loker RFID Sanctuary</div>
+                <div class="locker-bay-sub">
+                  {availableLockers.length} dari {lokerList.length} lemari loker siap dialokasikan untuk member baru.
                 </div>
               </div>
-              <div style="display: flex; gap: 4px; flex-wrap: wrap; max-width: 280px; justify-content: flex-end;">
-                {lokerList.map(l => (
-                  <span
-                    style={`display: inline-block; font-family: var(--font-mono); font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; border: 1px solid var(--border-hairline); ${
-                      l.ketersediaan === 'TERSEDIA'
-                        ? 'background: #EDF7EE; color: #1B5E20;'
-                        : 'background: #FAF8F5; color: #8C827A; opacity: 0.6;'
-                    }`}
-                    title={`${l.nomor_loker}: ${l.ketersediaan}`}
-                  >
-                    {l.nomor_loker}
-                  </span>
-                ))}
+              <div class="locker-bay-legend">
+                <div class="locker-legend-item">
+                  <span class="locker-legend-dot locker-legend-dot--available"></span>
+                  <span>Tersedia</span>
+                </div>
+                <div class="locker-legend-item">
+                  <span class="locker-legend-dot locker-legend-dot--occupied"></span>
+                  <span>Digunakan</span>
+                </div>
               </div>
+            </div>
+
+            <div class="locker-bay-grid">
+              {lokerList.map(l => {
+                const isAvail = l.ketersediaan === 'TERSEDIA';
+                return (
+                  <div class={`locker-tile ${isAvail ? 'locker-tile--available' : 'locker-tile--occupied'}`}>
+                    <div class="locker-tile-num">{l.nomor_loker}</div>
+                    <div class="locker-tile-area">{l.lokasi_area.replace('Locker Room ', '')}</div>
+                    <div class="locker-tile-status">
+                      <span class={`locker-status-dot ${isAvail ? 'locker-status-dot--green' : 'locker-status-dot--muted'}`}></span>
+                      <span>{isAvail ? 'Tersedia' : 'Terisi'}</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -517,7 +527,7 @@ const actionResultMbr = Astro.getActionResult(actions.pesanMembership);
             <span class="faq-chevron"><Icon name="caret-down" size={16} weight="bold" /></span>
           </button>
           <div class="faq-answer">
-            Ya, di ZEIRA kami menganut filosofi egalitarian luxury. Hanya ada satu status: Member Resmi. Anda tidak akan dibeda-bedakan berdasarkan warna kartu atau status tier — seluruh fasilitas studio, prioritas jadwal 30 hari, dan dedicated locker dinikmati secara setara oleh setiap member.
+            Ya, di ZEIRA kami menganut filosofi egalitarian luxury. Hanya ada satu status: Member Resmi. Anda tidak akan dibeda-bedakan berdasarkan warna kartu atau status tier, seluruh fasilitas studio, prioritas jadwal 30 hari, dan dedicated locker dinikmati secara setara oleh setiap member.
           </div>
         </div>
 

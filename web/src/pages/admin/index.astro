@@ -217,9 +217,11 @@ function formatTanggalSingkat(d: Date | string): string {
                     <span class="pill-tag pill-tag--brass">
                       {j.tb_kategori_layanan.nama_kategori}
                     </span>
-                    <span class={`pill-tag ${j.status_sesi === 'terjadwal' ? 'pill-tag--green' : 'pill-tag--neutral'}`}>
-                      {j.status_sesi.toUpperCase()}
-                    </span>
+                    {j.status_sesi !== 'terjadwal' && (
+                      <span class="pill-tag pill-tag--neutral">
+                        {j.status_sesi.toUpperCase()}
+                      </span>
+                    )}
                   </div>
 
                   <h4 class="admin-jadwal-title">

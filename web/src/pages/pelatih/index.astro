@@ -94,12 +94,8 @@ function formatTanggalLengkap(d: Date | string): string {
             <span class="pill-tag pill-tag--brass">
               {activeSesi.tb_kategori_layanan.nama_kategori}
             </span>
-            {activeSesi.status_sesi === 'selesai' ? (
+            {activeSesi.status_sesi === 'selesai' && (
               <span class="pill-tag pill-tag--green">KELAS TELAH SELESAI</span>
-            ) : (
-              <span class="pill-tag pill-tag--brass">
-                SESI AKTIF
-              </span>
             )}
           </div>
 
@@ -345,12 +341,8 @@ function formatTanggalLengkap(d: Date | string): string {
                     <span class="pill-tag pill-tag--brass">
                       {sesi.tb_kategori_layanan.nama_kategori}
                     </span>
-                    {isCompleted ? (
+                    {isCompleted && (
                       <span class="pill-tag pill-tag--green">SELESAI</span>
-                    ) : (
-                      <span class="pill-tag pill-tag--brass">
-                        TERJADWAL
-                      </span>
                     )}
                   </div>
 
