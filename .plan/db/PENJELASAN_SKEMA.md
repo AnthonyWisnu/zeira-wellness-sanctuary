@@ -110,7 +110,7 @@ Dokumen ini membedah arsitektur basis data **Wellness Club** secara menyeluruh, 
 
 ### 6. `tb_paket_membership`
 * **Peran Utama**: Katalog produk langganan berbasis durasi waktu (bukan kuota per kedatangan).
-* **Analog Dunia Nyata**: Brosur paket langganan keanggotaan klub (Paket Silver 1 Bulan seharga Rp350.000, Paket Gold 3 Bulan seharga Rp950.000).
+* **Analog Dunia Nyata**: Brosur paket langganan keanggotaan klub (Paket Membership 30 Hari seharga Rp350.000, Paket Membership 90 Hari seharga Rp950.000).
 * **Kolom Kunci & Logika**:
   * `nama_paket (VARCHAR 100 UNIQUE)`: Nama paket langganan.
   * `durasi_hari (INTEGER CHECK > 0)`: Masa aktif hak istimewa (contoh: 30 hari, 90 hari, 365 hari).
@@ -168,7 +168,7 @@ Dokumen ini membedah arsitektur basis data **Wellness Club** secara menyeluruh, 
   * `kode_pesanan (VARCHAR 50 UNIQUE)`: Nomor pesanan unik (contoh: `ORD-20260908-001`) yang dikirimkan ke Midtrans sebagai `order_id`.
   * `tipe_pesanan`: Menandai apakah pembayaran ini untuk `'membership'` atau tiket `'sesi'`.
   * `total_bayar (NUMERIC(12, 2))`: Nominal rupiah bersih yang harus dibayar.
-  * `snap_token (VARCHAR 255)`: Kunci token checkout dari Midtrans untuk menampilkan modal popup di aplikasi web Next.js.
+  * `snap_token (VARCHAR 255)`: Kunci token checkout dari Midtrans untuk menampilkan modal popup di aplikasi web.
   * `waktu_kedaluwarsa (TIMESTAMPTZ)`: Batas waktu pembayaran (stempel waktu saat klik checkout + 15 menit). Digunakan untuk mekanisme penahanan kursi sementara.
   * `signature_key_terakhir (VARCHAR 255)`: Jejak audit tanda tangan kriptografis SHA-512 dari webhook Midtrans sebagai bukti verifikasi keaslian transaksi.
   * `payload_gateway (JSONB)`: Arsip mentah seluruh respons JSON dari payment gateway untuk audit forensik bila terjadi sengketa pembayaran.

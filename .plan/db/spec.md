@@ -25,16 +25,16 @@ Sistem web platform terpadu untuk **Wellness Club** yang menangani siklus hidup 
 
 | Layer / Concern | Technology Selection | Architectural Rationale |
 | :--- | :--- | :--- |
-| **Runtime** | **Bun** (>= 1.3.x) | *Zero Node.js friction*. Menggunakan native Bun test runner, native password hashing (`Bun.password.hash(..., 'argon2id')`), dan startup latency ultra-cepat. |
-| **Framework** | **Next.js 16 (App Router)** | Fullstack monolith modern. Memisahkan Server Components (RSC), Route Handlers (`/api`), dan Server Actions. Terletak terisolasi di direktori `web/`. |
-| **Language** | **TypeScript** (strict: true) | Jaminan *type safety* menyeluruh dari skema basis data Drizzle hingga response DTO. |
+| **Runtime** | **Bun** (>= 1.3.x) | *Zero Node.js friction*. Menggunakan native Bun engine, script runner ultra-cepat, dan native compilation. |
+| **Framework** | **Astro 5 (SSR Mode)** | Mode Server-Side Rendering (`output: 'server'`) menggunakan `@astrojs/node`. Mutasi form menggunakan **Astro Actions** bervalidasi Zod. Direktori aplikasi terpusat di `web/`. |
+| **Language** | **TypeScript** (strict: true) | Jaminan *type safety* menyeluruh dari skema basis data Prisma, service layer, hingga response DTO. |
 | **Payment Gateway** | **Midtrans Snap Sandbox** | Layanan gateway pembayaran standar Indonesia (QRIS, VA Transfer) dengan validasi webhook SHA-512 & penanganan idempotensi. |
-| **Concurrency Control**| **Pessimistic Row-Level Locking** | `SELECT ... FOR UPDATE` dalam transaksi ACID PostgreSQL 16 untuk mencegah race condition / overbooking tanpa beban ketergantungan Redis. |
-| **Styling** | **Baremetal Pure CSS** | *Zero Tailwind, Zero CSS-in-JS, Zero CDN*. Mengikuti arsitektur colocation: satu komponen satu folder, CSS scoped murni, metodologi BEM (`__part`, `--variant`), zero bloat. |
-| **Database** | **PostgreSQL 16** | Standar industri untuk kepatuhan ACID, *row-level locking* (`FOR UPDATE`), dan performa relasional. *Native gen_random_uuid()* tanpa modul ekstensi eksternal. |
-| **ORM & Migrations** | **Drizzle ORM + Drizzle Kit** | *Zero header friction*, tanpa binary Rust Prisma yang berat. Syntax SQL-like, zero overhead startup di Bun, type inference 100% native. |
-| **Validation** | **Zod** | Validasi payload input di boundary API/Action sebelum dialirkan ke layer business logic / service. |
-| **Auth & Security** | **HTTP-only Cookie Session + Bun Crypto** | Hashing password via Argon2id. Session token ditandatangani via native crypto dan disimpan di HTTP-only secure cookie. |
+| **Concurrency Control**| **Pessimistic Row-Level Locking** | `SELECT ... FOR UPDATE` via Prisma Interactive Transaction (`tx.$queryRaw`) dalam transaksi ACID PostgreSQL 16/18 untuk mencegah race condition / overbooking tanpa ketergantungan Redis. |
+| **Styling** | **Baremetal Pure CSS** | *Zero Tailwind, Zero CSS-in-JS, Zero CDN*. Desain menganut prinsip *Tactile Atelier Skeuomorphic* (Plus Jakarta Sans, tabular-nums) dan sistem ikon Phosphor (<Icon /> SVGs lokal, zero emoji). |
+| **Database** | **PostgreSQL 16/18 Native** | Standar ACID murni, *row-level locking* (`FOR UPDATE`), dan performa relasional. *Native gen_random_uuid()* tanpa modul ekstensi eksternal. Konvensi tabel `tb_*`. |
+| **ORM & Migrations** | **Prisma ORM** | Skema basis data terpusat di `prisma/schema.prisma` dengan client singleton di `src/db/prisma.ts`. Inspeksi GUI visual via `bunx prisma studio`. |
+| **Validation** | **Zod** | Validasi payload input di boundary Astro Actions sebelum dialirkan ke layer business logic / service. |
+| **Auth & Security** | **HTTP-only Cookie Session + Argon2id** | Hashing password via Argon2id. Session token ditandatangani dan disimpan aman di HTTP-only secure cookie `zeira_session`. |
 
 ---
 
@@ -117,7 +117,7 @@ Basis data dirancang dengan normalisasi tingkat ketiga (3NF) dan penegakan integ
 3. **`tb_kategori_layanan`**: Taksonomi kelas (Yoga, Pilates, Spa & Sauna) beserta ikon dan slug.
 4. **`tb_ruangan`**: Studio fisik dengan batas kuota kapasitas penjaga ketenangan.
 5. **`tb_loker`**: Master lemari loker pribadi (LK-01 s.d. LK-10) untuk fasilitas eksklusif member.
-6. **`tb_paket_membership`**: Katalog paket langganan durasi masa aktif (Silver 1 Bulan, Gold 3 Bulan).
+6. **`tb_paket_membership`**: Katalog paket langganan durasi masa aktif (Paket Membership 30 Hari, Paket Membership 90 Hari).
 7. **`tb_keanggotaan`**: Relasi masa aktif member pelanggan dengan lemari loker terpilih.
 8. **`tb_jadwal_sesi`**: Jadwal sesi studio, kapasitas maksimal, jumlah terisi, tarif berjenjang, dan batas batal.
 9. **`tb_pesanan`**: Transaksi pembayaran (Midtrans Snap token, expiry 15 menit, signature webhook, dan audit trail).

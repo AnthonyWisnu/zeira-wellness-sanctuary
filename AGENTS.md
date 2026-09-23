@@ -39,7 +39,7 @@ Platform beroperasi dengan dua pilar monetisasi yang berdampingan:
 ```
 
 1. **Model A: Membership Berbasis Durasi Waktu**:
-   - Paket langganan durasi (contoh: *Silver Wellness 30 Hari* seharga Rp350.000, *Gold Serenity 90 Hari* seharga Rp950.000).
+   - Paket langganan durasi (contoh: *Paket Membership 30 Hari* seharga Rp350.000, *Paket Membership 90 Hari* seharga Rp950.000).
    - Member mendapatkan hak istimewa: **1 dedicated locker tetap** selama masa aktif, akses bebas kolam mineral & *herbal hydration bar* setiap hari, hak memesan jadwal **hingga 30 hari ke depan** (*Priority Vision Window*), dan tarif kelas khusus member yang jauh lebih hemat.
 2. **Model B: Guest Drop-in (Tamu Umum)**:
    - Pelanggan tanpa membership dapat langsung membeli tiket sesi kelas secara satuan (drop-in pass) dengan tarif reguler (`harga_non_member`).
@@ -98,7 +98,7 @@ Sistem membagi pengguna ke dalam **3 Peran Utama** pada tabel `tb_pengguna` (`pe
 ## 3. Alur Bisnis Inti (End-to-End Workflows & State Machines)
 
 ### 3.1 Alur 1: Pembelian & Aktivasi Membership + Pemilihan Loker Pribadi
-1. **Eksplorasi Paket**: Pelanggan memilih paket membership di `/membership` (contoh: *Silver Wellness 30 Hari*).
+1. **Eksplorasi Paket**: Pelanggan memilih paket membership di `/membership` (contoh: *Paket Membership 30 Hari*).
 2. **Pemilihan Loker Fisik**: Sistem menampilkan inventaris lemari loker melalui view `v_status_loker`. Pelanggan memilih satu nomor loker yang berstatus `tersedia` (misal: `LK-02` di *Locker Room Pria*).
 3. **Inisiasi Pesanan**: Backend membuat pesanan di `tb_pesanan` (`tipe_pesanan = 'membership'`, `status_pembayaran = 'menunggu_pembayaran'`).
 4. **Pembayaran Midtrans**: Pelanggan membayar via QRIS/VA melalui Midtrans Snap.
