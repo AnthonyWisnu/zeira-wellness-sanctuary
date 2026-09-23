@@ -301,6 +301,19 @@ bun run dev
 ```
 Aplikasi web siap diakses di `http://localhost:4321`.
 
+### 7.3 Tabel Perintah Operasional Lengkap
+
+Seluruh perintah dijalankan dari dalam direktori `web/` menggunakan **Bun**:
+
+| Perintah | Deskripsi Tindakan |
+| :--- | :--- |
+| `bun install` | Menginstalasi seluruh dependensi proyek |
+| `bun run dev` | Menjalankan server pengembangan lokal di `http://localhost:4321` |
+| `bun run build` | Melakukan kompilasi produksi server SSR ke direktori `./dist/` |
+| `bun run seed` | Menjalankan database seeder kredensial & transaksi demo |
+| `bunx prisma generate` | Men-generate TypeScript types dari `prisma/schema.prisma` |
+| `bunx prisma studio` | Membuka antarmuka GUI browser untuk inspeksi visual basis data PostgreSQL |
+
 ---
 
 ## 8. Akun Uji Coba Demo (Demo Credentials)

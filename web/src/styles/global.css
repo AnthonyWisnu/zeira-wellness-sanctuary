@@ -1817,15 +1817,16 @@ img {
 }
 
 .comparison-card {
-  padding: clamp(2rem, 3vw, 2.5rem);
+  padding: 2rem 2.25rem;
   background: var(--surface-plate);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-hairline);
   box-shadow: var(--shadow-convex);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  text-align: left;
   transition: all 0.2s ease;
 }
 
@@ -1836,18 +1837,21 @@ img {
 
 .comparison-card__header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: flex-start;
-  margin-bottom: 1rem;
+  text-align: left;
+  margin-bottom: 0.5rem;
 }
 
 .comparison-card__tag {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-subtle);
+  margin-bottom: 4px;
 }
 
 .comparison-card__tag--brass {
@@ -1856,16 +1860,19 @@ img {
 
 .comparison-card__title {
   font-family: var(--font-display);
-  font-size: 1.6rem;
+  font-size: 1.65rem;
   font-weight: 800;
   color: var(--text-main);
-  margin: 6px 0 2px;
+  margin: 0 0 4px 0;
   letter-spacing: -0.015em;
+  line-height: 1.2;
 }
 
 .comparison-card__sub {
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   color: var(--text-muted);
+  line-height: 1.4;
+  margin: 0;
 }
 
 .comparison-price-box {
@@ -1874,20 +1881,22 @@ img {
   background: var(--surface-recessed);
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-hairline);
+  text-align: left;
 }
 
 .comparison-price-box--featured {
-  background: rgba(197, 160, 89, 0.08);
-  border-color: rgba(197, 160, 89, 0.28);
+  background: #FAF6ED;
+  border-color: rgba(197, 160, 89, 0.35);
 }
 
 .comparison-price-label {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
   font-weight: 700;
   color: var(--text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  margin-bottom: 3px;
 }
 
 .comparison-price-val {
@@ -1895,10 +1904,14 @@ img {
   font-size: 1.45rem;
   font-weight: 800;
   color: var(--text-main);
-  margin-top: 2px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  line-height: 1.1;
 }
 
 .comparison-price-unit {
+  font-family: var(--font-body);
   font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-muted);

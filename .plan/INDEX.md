@@ -19,9 +19,9 @@ Direktori `.plan/` ini merupakan pusat dokumentasi rancang bangun sistem, arsite
 │   ├── usecase_diagram.mmd                 # 💻 Kode sumber Mermaid diagram
 │   └── usecase_diagram.txt                 # 📝 Salinan teks kode Mermaid
 └── design/                                  # Aset Tangkapan Layar Desain Referensi
-    ├── zeira_sanctuary_home_skeuomorphic/  # Mockup tampilan beranda utama
-    ├── zeira_sanctuary_jadwal_kelas_vertical_list/ # Mockup katalog jadwal
-    └── zeira_sanctuary_membership_tanpa_drama/     # Mockup katalog paket keanggotaan
+    ├── zeira_sanctuary_home_skeuomorphic/home_skeuomorphic_preview.png
+    ├── zeira_sanctuary_jadwal_kelas_vertical_list/jadwal_kelas_preview.png
+    └── zeira_sanctuary_membership_tanpa_drama/membership_passbook_preview.png
 ```
 
 > **Catatan Sumber Kebenaran DDL**: Skrip DDL PostgreSQL 16/18 Native yang aktif dan kanonik berada di direktori [`database/schema.sql`](file:///D:/DEVELOPMENT/github/19_wellnes_bk/database/schema.sql) dan skema ORM berada di [`web/prisma/schema.prisma`](file:///D:/DEVELOPMENT/github/19_wellnes_bk/web/prisma/schema.prisma).

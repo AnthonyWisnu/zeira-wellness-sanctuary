@@ -19,6 +19,9 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+web/.env
+web/.env.*
+!web/.env.example
 
 # Temporary & Audit
 audit_shots/

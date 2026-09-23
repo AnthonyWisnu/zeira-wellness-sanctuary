@@ -76,7 +76,7 @@ Membangun platform *fullstack* lengkap **ZEIRA Wellness Sanctuary** di atas kera
 ### Fase 1: Basis Data & Prisma ORM Modeling
 - **Output File**:
   - `web/.env`: Konfigurasi `DATABASE_URL="postgresql://postgres:postgres@localhost:5432/zeira_sanctuary_db?schema=public"`, `MIDTRANS_SERVER_KEY`, `MIDTRANS_CLIENT_KEY`, `SESSION_SECRET`.
-  - `web/prisma/schema.prisma`: DDL 10 tabel PostgreSQL 16 murni sesuai standar [AGENTS.md](file:///C:/laragon/www/zeira-wellness-sanctuary/AGENTS.md).
+  - `web/prisma/schema.prisma`: DDL 10 tabel PostgreSQL 16 murni sesuai standar [AGENTS.md](AGENTS.md).
   - `web/src/db/prisma.ts`: Singleton PrismaClient yang ramah HMR (Hot Module Replacement) di Bun runtime.
 - **Validasi**:
   - Eksekusi `database/schema.sql` ke server PostgreSQL lokal.

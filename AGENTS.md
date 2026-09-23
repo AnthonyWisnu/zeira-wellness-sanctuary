@@ -254,7 +254,7 @@ Setiap agen, subagen, dan kontributor WAJIB mematuhi stack berikut tanpa deviasi
 | **Framework Fullstack** | **Astro** (SSR Mode) | Mode Server-Side Rendering (`output: 'server'`) menggunakan `@astrojs/node`. Gunakan **Astro Actions** untuk mutasi server/form. Dilarang menggunakan Next.js. |
 | **Database** | **PostgreSQL 16 Native** | Standar ACID murni. Gunakan `gen_random_uuid()` bawaan PostgreSQL 16 (tanpa ekstensi `uuid-ossp`). Konvensi tabel `tb_*`. |
 | **ORM & Migrations** | **Prisma ORM** | Skema terpusat di `prisma/schema.prisma`. Gunakan `bunx prisma studio` untuk inspeksi visual GUI dan `bunx prisma db pull` / `push`. |
-| **Styling & Design System** | **Baremetal Pure CSS** | Berbasis panduan resmi [DESIGN.md](file:///C:/laragon/www/zeira-wellness-sanctuary/web/DESIGN.md). **DILARANG memakai Tailwind, CSS-in-JS, atau CDN eksternal**. Desain menganut prinsip *Tactile Atelier Skeuomorphic* (Plus Jakarta Sans, JetBrains Mono) dan sistem ikon Phosphor (<Icon /> SVGs lokal, zero emoji). |
+| **Styling & Design System** | **Baremetal Pure CSS** | Berbasis panduan resmi [DESIGN.md](DESIGN.md). **DILARANG memakai Tailwind, CSS-in-JS, atau CDN eksternal**. Desain menganut prinsip *Tactile Atelier Skeuomorphic* (Plus Jakarta Sans, JetBrains Mono) dan sistem ikon Phosphor (<Icon /> SVGs lokal, zero emoji). |
 | **Payment Gateway** | **Midtrans Snap Sandbox** | Verifikasi signature notifikasi webhook menggunakan SHA-512. Mekanisme penahanan kursi sementara 15 menit. |
 | **Concurrency Control** | **Pessimistic Row Locking** | `SELECT ... FOR UPDATE` via raw SQL di Prisma Interactive Transaction (`tx.$queryRaw`) + Hard Constraint `CHECK (jumlah_terisi <= kapasitas_maksimal)`. Dilarang bergantung pada Redis. |
 
