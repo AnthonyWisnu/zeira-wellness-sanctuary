@@ -54,16 +54,12 @@ const formatJamMenit = (dateVal: Date | string) => {
   <!-- VIEW 1: STATUS MEMBERSHIP & DEDICATED LOCKER -->
   {currentTab === 'membership' && (
     <div>
-      <div style="margin-bottom: 2rem;">
-        <div style="font-family: var(--font-body); font-size: 0.75rem; color: var(--color-primary); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;">
-          PORTAL KEANGGOTAAN EKSKLUSIF
+      <div class="schedule-header-bar" style="margin-bottom: 2rem;">
+        <h1 class="schedule-header-bar__title">Status Membership & Loker Pribadi</h1>
+        <div class="schedule-stat-chip">
+          <span class="schedule-stat-chip__label">STATUS AKUN:</span>
+          <span class="schedule-stat-chip__value">{user.isMemberAktif ? 'Member Aktif' : 'Tamu Umum'}</span>
         </div>
-        <h1 style="font-family: var(--font-display); font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin: 4px 0;">
-          Status Membership & Lemari Loker Pribadi
-        </h1>
-        <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
-          Hak akses fasilitas kebugaran, lemari loker digital RFID tetap, dan masa aktif langganan Anda.
-        </p>
       </div>
 
       {user.isMemberAktif && user.keanggotaanAktif ? (
@@ -86,7 +82,7 @@ const formatJamMenit = (dateVal: Date | string) => {
 
             <div style="background: #FFF; border: 1px solid var(--border-hairline); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 1.25rem;">
               <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px;">Masa Berlaku Keanggotaan:</div>
-              <div style="font-family: var(--font-mono); font-size: 0.95rem; font-weight: 800; color: var(--color-primary);">
+              <div style="font-family: var(--font-body); font-variant-numeric: tabular-nums; font-size: 0.95rem; font-weight: 800; color: var(--color-primary);">
                 Aktif s/d {user.keanggotaanAktif.tanggal_berakhir}
               </div>
             </div>
@@ -122,7 +118,7 @@ const formatJamMenit = (dateVal: Date | string) => {
               <div style="font-size: 0.74rem; font-family: var(--font-body); font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">
                 KODE LEMARI LOKER FISIK
               </div>
-              <div style="font-family: var(--font-mono); font-size: 2.4rem; font-weight: 800; color: var(--color-primary); letter-spacing: 0.05em; margin: 4px 0;">
+              <div style="font-family: var(--font-body); font-variant-numeric: tabular-nums; font-size: 2.4rem; font-weight: 800; color: var(--color-primary); letter-spacing: 0.05em; margin: 4px 0;">
                 {user.keanggotaanAktif.nomor_loker || 'LK-02'}
               </div>
               <div style="font-size: 0.78rem; color: var(--text-muted);">
@@ -160,21 +156,17 @@ const formatJamMenit = (dateVal: Date | string) => {
   <!-- VIEW 2: TIKET RESERVASI KELAS (DEFAULT) -->
   {currentTab === 'tiket' && (
     <div>
-      <div style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 1rem;">
-        <div>
-          <div style="font-family: var(--font-body); font-size: 0.75rem; color: var(--color-primary); font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;">
-            PORTAL RESERVASI PELANGGAN
+      <div class="schedule-header-bar" style="margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <h1 class="schedule-header-bar__title">Tiket Reservasi Kelas</h1>
+          <div class="schedule-stat-chip">
+            <span class="schedule-stat-chip__label">TOTAL TIKET:</span>
+            <span class="schedule-stat-chip__value">{tiketList.length} Terdaftar</span>
           </div>
-          <h1 style="font-family: var(--font-display); font-size: 1.85rem; font-weight: 800; color: var(--text-main); margin: 4px 0;">
-            Tiket Reservasi Kelas Anda
-          </h1>
-          <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0;">
-            Daftar sesi studio yang Anda pesan. Harap hadir di studio 15 menit sebelum kelas dimulai.
-          </p>
         </div>
 
         <div>
-          <a href="/jadwal" class="btn-primary" style="text-decoration: none; font-size: 0.85rem; padding: 10px 16px; display: flex; align-items: center; gap: 6px;">
+          <a href="/jadwal" class="btn-primary" style="text-decoration: none; font-size: 0.85rem; padding: 9px 16px; display: inline-flex; align-items: center; gap: 6px;">
             <Icon name="calendar-check" size="1rem" /> + Pesan Kelas Studio
           </a>
         </div>
@@ -206,6 +198,7 @@ const formatJamMenit = (dateVal: Date | string) => {
               day: 'numeric',
               month: 'long',
               year: 'numeric',
+              timeZone: 'Asia/Makassar',
             });
             const jamStr = `${formatJamMenit(t.waktu_mulai)} – ${formatJamMenit(t.waktu_selesai)} WITA`;
 
@@ -351,7 +344,8 @@ const formatJamMenit = (dateVal: Date | string) => {
   }
 
   .ticket-code-badge {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
     font-size: 0.76rem;
     font-weight: 800;
     color: var(--color-primary);
@@ -377,7 +371,8 @@ const formatJamMenit = (dateVal: Date | string) => {
   }
 
   .ticket-price {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
     font-size: 1.35rem;
     font-weight: 800;
     color: var(--color-primary);
@@ -386,7 +381,8 @@ const formatJamMenit = (dateVal: Date | string) => {
 
   .ticket-rate-label {
     display: inline-block;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
     font-size: 0.68rem;
     font-weight: 700;
     color: var(--text-muted);
@@ -449,11 +445,11 @@ const formatJamMenit = (dateVal: Date | string) => {
   }
 
   .ticket-spec-label {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
     font-weight: 800;
     color: var(--text-muted);
-    letter-spacing: 0.08em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
@@ -472,7 +468,8 @@ const formatJamMenit = (dateVal: Date | string) => {
   }
 
   .ticket-time-badge {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
     font-size: 0.8rem;
     font-weight: 800;
     color: var(--color-primary);
@@ -480,7 +477,7 @@ const formatJamMenit = (dateVal: Date | string) => {
     border: 1px solid rgba(28, 48, 36, 0.16);
     padding: 2px 8px;
     border-radius: 4px;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.02em;
   }
 
   .ticket-room-name {
@@ -512,7 +509,8 @@ const formatJamMenit = (dateVal: Date | string) => {
   }
 
   .pill-tag--cancelled {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
     font-size: 0.72rem;
     font-weight: 800;
     color: #721C24;

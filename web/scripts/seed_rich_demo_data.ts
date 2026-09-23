@@ -122,14 +122,14 @@ async function main() {
   });
 
   // 5. Ensure member package & locker LK-02 for Kadek Adi
-  const silverPkg = await prisma.tb_paket_membership.findFirst({
-    where: { nama_paket: { contains: 'Silver' } },
+  const memberPkg30 = await prisma.tb_paket_membership.findFirst({
+    where: { durasi_hari: 30 },
   });
   const lockerLK02 = await prisma.tb_loker.findFirst({
     where: { nomor_loker: 'LK-02' },
   });
 
-  if (silverPkg && lockerLK02) {
+  if (memberPkg30 && lockerLK02) {
     // Delete any conflicting active membership for Kadek
     await prisma.tb_keanggotaan.deleteMany({
       where: { id_pelanggan: memberKadek.id },
@@ -139,7 +139,7 @@ async function main() {
       data: {
         id: 'a1000000-0000-0000-0000-000000000002',
         id_pelanggan: memberKadek.id,
-        id_paket_membership: silverPkg.id,
+        id_paket_membership: memberPkg30.id,
         id_loker: lockerLK02.id,
         tanggal_mulai: new Date(),
         tanggal_berakhir: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),

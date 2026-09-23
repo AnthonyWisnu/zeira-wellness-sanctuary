@@ -34,7 +34,7 @@ const { jadwal, kategoriList } = await JadwalService.getKatalogJadwal(isMemberAk
         <div class="slot-meter-box">
           <div class="slot-gauge-icon"><Icon name="chart-bar" size={24} /></div>
           <div>
-            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-subtle); text-transform: uppercase;">STATUS SISTEM</div>
+            <div style="font-family: var(--font-body); font-size: 0.65rem; font-weight: 800; color: var(--text-subtle); text-transform: uppercase; letter-spacing: 0.04em;">STATUS SISTEM</div>
             <div style="font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--text-main); line-height: 1.1;">
               {jadwal.length} Sesi Terbuka
             </div>
@@ -118,7 +118,7 @@ const { jadwal, kategoriList } = await JadwalService.getKatalogJadwal(isMemberAk
 
                 <h3 class="class-title">{sesi.judul_sesi}</h3>
                 <p class="class-desc">
-                  Sesi eksklusif mindful movement di ruangan {sesi.ruangan.nama}. Batas waktu pembatalan mandiri fleksibel hingga {sesi.batas_batal_jam} jam sebelum kelas dimulai.
+                  Sesi eksklusif mindful movement. Batas waktu pembatalan mandiri hingga {sesi.batas_batal_jam} jam sebelum kelas dimulai.
                 </p>
 
                 <div class="seat-meter">
@@ -175,7 +175,7 @@ const { jadwal, kategoriList } = await JadwalService.getKatalogJadwal(isMemberAk
 
                   {sesi.isLockedForGuest ? (
                     <div style="background: #FAF8F5; border: 1px dashed var(--border-hairline); border-radius: var(--radius-sm); padding: 8px 12px; text-align: center; width: 100%; box-sizing: border-box;">
-                      <div style="font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; color: var(--color-brass-dark); display: flex; align-items: center; justify-content: center; gap: 4px;">
+                      <div style="font-family: var(--font-body); font-size: 0.72rem; font-weight: 800; color: var(--color-brass-dark); display: flex; align-items: center; justify-content: center; gap: 4px;">
                         <Icon name="lock-key" size={14} /> Eksklusif Member
                       </div>
                       <a href="/membership" style="font-size: 0.72rem; color: var(--color-primary); text-decoration: underline; font-weight: 700;">

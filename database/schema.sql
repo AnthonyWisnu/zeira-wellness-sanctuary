@@ -462,8 +462,8 @@ VALUES
 -- 6. Katalog Paket Membership Masa Aktif
 INSERT INTO tb_paket_membership (id, nama_paket, durasi_hari, harga, fasilitas_deskripsi)
 VALUES
-('f0000000-0000-0000-0000-000000000001', 'Silver Wellness (1 Bulan)', 30, 350000, 'Akses bebas kolam renang & air mineral sehat harian, 1 dedicated locker tetap selama 30 hari, jadwal vision 30 hari ke depan, serta tarif hemat harga member untuk setiap sesi kelas studio.'),
-('f0000000-0000-0000-0000-000000000002', 'Gold Serenity (3 Bulan)', 90, 950000, 'Akses bebas kolam renang & air mineral sehat harian, 1 dedicated locker tetap selama 90 hari, jadwal vision 30 hari ke depan, 1 sesi konsultasi kebugaran privat, serta tarif hemat member.');
+('f0000000-0000-0000-0000-000000000001', 'Paket Membership 30 Hari', 30, 350000, 'Akses bebas kolam renang & air mineral sehat harian, 1 dedicated locker tetap selama 30 hari, jadwal vision 30 hari ke depan, serta tarif hemat harga member untuk setiap sesi kelas studio.'),
+('f0000000-0000-0000-0000-000000000002', 'Paket Membership 90 Hari', 90, 950000, 'Akses bebas kolam renang & air mineral sehat harian, 1 dedicated locker tetap selama 90 hari, jadwal vision 30 hari ke depan, 1 sesi konsultasi kebugaran privat, serta tarif hemat member.');
 
 -- 7. Data Keanggotaan Aktif Member (Kadek Adi memegang LK-01)
 INSERT INTO tb_keanggotaan (id, id_pelanggan, id_paket_membership, id_loker, tanggal_mulai, tanggal_berakhir, status)

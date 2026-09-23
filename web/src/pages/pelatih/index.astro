@@ -83,12 +83,8 @@ function formatTanggalLengkap(d: Date | string): string {
         </a>
       </div>
 
-      <div class="page-header">
-        <div class="page-eyebrow">PORTAL INSTRUKTUR • VERIFIKASI PRESENSI FISIK</div>
-        <h1 class="page-title">Lembar Presensi Kelas</h1>
-        <p class="page-subtitle">
-          Verifikasi kehadiran fisik peserta di pintu studio secara real-time. Data tercatat sah di bawah nama instruktur.
-        </p>
+      <div class="page-header" style="margin-bottom: 1.5rem;">
+        <h1 class="page-title" style="margin: 0;">Lembar Presensi Kelas</h1>
       </div>
 
       <!-- PAPAN INSPEKSI SESI (ATELIER SPEC CARD MEWAH) -->
@@ -134,13 +130,10 @@ function formatTanggalLengkap(d: Date | string): string {
           </div>
 
           <div class="spec-grid-item">
-            <div class="spec-grid-item__label">RUANGAN STUDIO</div>
-            <div class="spec-grid-item__value spec-grid-item__value--bold">{activeSesi.tb_ruangan.nama_ruangan}</div>
-          </div>
-
-          <div class="spec-grid-item">
-            <div class="spec-grid-item__label">LOKASI RUANGAN</div>
-            <div class="spec-grid-item__value">{activeSesi.tb_ruangan.lokasi}</div>
+            <div class="spec-grid-item__label">RUANGAN & LOKASI</div>
+            <div class="spec-grid-item__value spec-grid-item__value--bold">
+              {activeSesi.tb_ruangan.nama_ruangan} <span style="font-weight: 500; color: var(--text-muted);">({activeSesi.tb_ruangan.lokasi})</span>
+            </div>
           </div>
 
           <div class="spec-grid-item spec-grid-item--full">
@@ -184,7 +177,7 @@ function formatTanggalLengkap(d: Date | string): string {
       <div class="surface-card ledger-card">
         <div class="ledger-header">
           <div class="ledger-header__title">
-            DAFTAR PESERTA TERDAFTAR ({pesertaActive.length} ORANG)
+            DAFTAR PESERTA TERDAFTAR
           </div>
         </div>
 
@@ -382,16 +375,9 @@ function formatTanggalLengkap(d: Date | string): string {
                     </div>
 
                     <div class="sesi-spec-row">
-                      <div class="sesi-spec-key">RUANGAN STUDIO</div>
+                      <div class="sesi-spec-key">RUANGAN & LOKASI</div>
                       <div class="sesi-spec-val sesi-spec-val--strong">
-                        {sesi.tb_ruangan.nama_ruangan}
-                      </div>
-                    </div>
-
-                    <div class="sesi-spec-row">
-                      <div class="sesi-spec-key">LOKASI RUANGAN</div>
-                      <div class="sesi-spec-val">
-                        {sesi.tb_ruangan.lokasi}
+                        {sesi.tb_ruangan.nama_ruangan} <span style="font-weight: 500; color: var(--text-muted);">({sesi.tb_ruangan.lokasi})</span>
                       </div>
                     </div>
 
@@ -405,24 +391,27 @@ function formatTanggalLengkap(d: Date | string): string {
                   </div>
                 </div>
 
-                <!-- AKSI KELAS -->
+                <!-- AKSI KELAS DENGAN DIVIDER & FLAT KOTAK RAPI -->
                 <div class="sesi-item-card__actions">
                   <a
                     href={`/pelatih?sesiId=${sesi.id}`}
-                    class="btn-primary"
-                    style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; white-space: nowrap;"
+                    class="btn-action-primary"
                   >
                     <Icon name="clipboard-text" size="1.1rem" />
-                    <span>Buka Lembar Presensi ({pesertaCount})</span>
+                    <span>Buka Lembar Presensi</span>
                   </a>
 
-                  {!isCompleted && (
+                  {!isCompleted ? (
                     <form method="POST" action={actions.selesaikanSesi} onsubmit="return confirm('Tandai sesi kelas ini telah selesai?');" style="margin: 0; width: 100%;">
                       <input type="hidden" name="jadwalId" value={sesi.id} />
-                      <button type="submit" class="btn-secondary" style="width: 100%; justify-content: center;" title="Tandai Kelas Selesai">
+                      <button type="submit" class="btn-action-secondary" title="Tandai Kelas Selesai">
                         Selesaikan Kelas
                       </button>
                     </form>
+                  ) : (
+                    <div class="action-completed-badge">
+                      ✓ KELAS SELESAI
+                    </div>
                   )}
                 </div>
               </div>
@@ -567,14 +556,13 @@ function formatTanggalLengkap(d: Date | string): string {
   .sesi-item-card {
     padding: 1.5rem 1.75rem;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
     align-items: center;
-    gap: 1.5rem;
+    justify-content: space-between;
+    gap: 1.75rem;
   }
   .sesi-item-card__main {
     flex: 1;
-    min-width: 300px;
+    min-width: 0;
   }
   .sesi-item-card__tags {
     display: flex;
@@ -584,7 +572,7 @@ function formatTanggalLengkap(d: Date | string): string {
   }
   .sesi-item-card__title {
     font-family: var(--font-display);
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: var(--text-main);
     margin: 0 0 1rem;
@@ -593,9 +581,75 @@ function formatTanggalLengkap(d: Date | string): string {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
-    min-width: 230px;
+    justify-content: center;
+    gap: 10px;
+    width: 220px;
     flex-shrink: 0;
+    border-left: 1px solid var(--border-hairline);
+    padding-left: 1.75rem;
+  }
+  .btn-action-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 16px;
+    background: var(--color-primary);
+    color: #FAF8F5;
+    border: 1px solid var(--color-primary-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: all 0.15s ease;
+    cursor: pointer;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+  .btn-action-primary:hover {
+    background: var(--color-primary-light);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+  }
+  .btn-action-secondary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 9px 16px;
+    background: #FFF;
+    color: var(--text-main);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 800;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: all 0.15s ease;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+  .btn-action-secondary:hover {
+    background: #FAF8F5;
+    border-color: var(--color-brass);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+  }
+  .action-completed-badge {
+    background: #E6F4EA;
+    border: 1px solid #137333;
+    color: #0D522C;
+    font-family: var(--font-body);
+    font-size: 0.76rem;
+    font-weight: 800;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    letter-spacing: 0.04em;
   }
 
   /* SPEC ROW PATTERN (DISIPLIN PER-BARIS, ZERO INLINE BULLET) */
@@ -991,6 +1045,18 @@ function formatTanggalLengkap(d: Date | string): string {
   }
 
   @media (max-width: 768px) {
+    .sesi-item-card {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1.25rem;
+    }
+    .sesi-item-card__actions {
+      width: 100%;
+      border-left: none;
+      border-top: 1px solid var(--border-hairline);
+      padding-left: 0;
+      padding-top: 1.25rem;
+    }
     .spec-grid-item,
     .sesi-spec-row {
       grid-template-columns: 1fr;

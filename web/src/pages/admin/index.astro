@@ -76,38 +76,30 @@ function formatTanggalSingkat(d: Date | string): string {
   <!-- ========================================================================= -->
   {currentTab === 'overview' && (
     <div>
-      <div class="page-header">
-        <div class="page-eyebrow">RINGKASAN EKSEKUTIF • AUDIT OPERASIONAL</div>
-        <h1 class="page-title">Ringkasan & Metrik Studio</h1>
-        <p class="page-subtitle">
-          Performa operasional sanctuary, okupansi fasilitas RFID, dan ringkasan aktivitas terkini.
-        </p>
+      <div class="page-header" style="margin-bottom: 1.75rem;">
+        <h1 class="page-title" style="margin: 0;">Ringkasan Studio</h1>
       </div>
 
       <!-- 4 KARTU METRIK UTAMA -->
       <div class="kpi-grid">
         <div class="surface-card kpi-card">
-          <div class="kpi-label">TOTAL PENDAPATAN LUNAS</div>
+          <div class="kpi-label">PENDAPATAN LUNAS</div>
           <div class="kpi-value">Rp {metrics.totalPendapatan.toLocaleString('id-ID')}</div>
-          <div class="kpi-subtext">Dari transaksi pesanan lunas</div>
         </div>
 
         <div class="surface-card kpi-card">
           <div class="kpi-label">MEMBER AKTIF</div>
           <div class="kpi-value kpi-value--brass">{metrics.totalMemberAktif} Member</div>
-          <div class="kpi-subtext">Total akun: {metrics.totalPengguna} pengguna</div>
         </div>
 
         <div class="surface-card kpi-card">
           <div class="kpi-label">SESI KELAS AKTIF</div>
           <div class="kpi-value">{metrics.totalJadwalAktif} Sesi</div>
-          <div class="kpi-subtext">Siap dipesan member & tamu</div>
         </div>
 
         <div class="surface-card kpi-card">
-          <div class="kpi-label">OKUPANSI LOKER PRIBADI</div>
+          <div class="kpi-label">LOKER TERISI</div>
           <div class="kpi-value">{metrics.lokerDigunakan} / {metrics.totalLoker} Loker</div>
-          <div class="kpi-subtext">{metrics.lokerTersedia} Loker siap disewa</div>
         </div>
       </div>
 
@@ -204,20 +196,18 @@ function formatTanggalSingkat(d: Date | string): string {
   <!-- ========================================================================= -->
   {currentTab === 'jadwal' && (
     <div>
-      <div class="page-header">
-        <div class="page-eyebrow">STUDIO SCHEDULER • MANAJEMEN SESI</div>
-        <h1 class="page-title">Jadwal & Sesi Kelas Studio</h1>
-        <p class="page-subtitle">
-          Kelola kuota sesi studio, tarif berjenjang (member vs tamu), batas waktu pembatalan, dan jadwalkan sesi baru.
-        </p>
+      <div class="schedule-header-bar">
+        <h1 class="page-title" style="margin: 0;">Jadwal & Sesi Kelas</h1>
+        <div class="schedule-stat-chip">
+          <span class="schedule-stat-chip__label">TOTAL SESI:</span>
+          <span class="schedule-stat-chip__val">{jadwalList.length}</span>
+          <span class="schedule-stat-chip__desc">Kelas Terdaftar</span>
+        </div>
       </div>
 
       <div class="jadwal-layout-grid">
         <!-- DAFTAR JADWAL KELAS -->
         <div>
-          <h3 class="section-title" style="margin-bottom: 1rem;">
-            Daftar Jadwal Kelas Studio ({jadwalList.length})
-          </h3>
 
           <div class="jadwal-card-list">
             {jadwalList.map((j) => (
@@ -226,9 +216,6 @@ function formatTanggalSingkat(d: Date | string): string {
                   <div class="admin-jadwal-tags">
                     <span class="pill-tag pill-tag--brass">
                       {j.tb_kategori_layanan.nama_kategori}
-                    </span>
-                    <span class="pill-tag pill-tag--neutral">
-                      {j.tb_ruangan.nama_ruangan}
                     </span>
                     <span class={`pill-tag ${j.status_sesi === 'terjadwal' ? 'pill-tag--green' : 'pill-tag--neutral'}`}>
                       {j.status_sesi.toUpperCase()}
@@ -256,16 +243,9 @@ function formatTanggalSingkat(d: Date | string): string {
                     </div>
 
                     <div class="admin-spec-row">
-                      <div class="admin-spec-key">RUANGAN STUDIO</div>
+                      <div class="admin-spec-key">RUANGAN & LOKASI</div>
                       <div class="admin-spec-val" style="font-weight: 700;">
-                        {j.tb_ruangan.nama_ruangan}
-                      </div>
-                    </div>
-
-                    <div class="admin-spec-row">
-                      <div class="admin-spec-key">LOKASI RUANGAN</div>
-                      <div class="admin-spec-val">
-                        {j.tb_ruangan.lokasi}
+                        {j.tb_ruangan.nama_ruangan} <span style="font-weight: 500; color: var(--text-muted);">({j.tb_ruangan.lokasi})</span>
                       </div>
                     </div>
 
@@ -449,19 +429,20 @@ function formatTanggalSingkat(d: Date | string): string {
   <!-- ========================================================================= -->
   {currentTab === 'ruangan' && (
     <div>
-      <div class="page-header">
-        <div class="page-eyebrow">STUDIO INVENTORY • FASILITAS FISIK & RFID</div>
-        <h1 class="page-title">Master Ruangan & Inventaris Lemari Loker</h1>
-        <p class="page-subtitle">
-          Monitoring status fisik lemari loker RFID (LK-01 s/d LK-10) serta master data studio.
-        </p>
+      <div class="schedule-header-bar">
+        <h1 class="page-title" style="margin: 0;">Ruangan & Lemari Loker</h1>
+        <div class="schedule-stat-chip">
+          <span class="schedule-stat-chip__label">TOTAL LOKER:</span>
+          <span class="schedule-stat-chip__val">{lokerList.length}</span>
+          <span class="schedule-stat-chip__desc">Loker Pribadi</span>
+        </div>
       </div>
 
-      <!-- INVENTARIS LOKER RFID -->
+      <!-- INVENTARIS LOKER -->
       <div style="margin-bottom: 3rem;">
         <h3 class="section-title" style="margin-bottom: 1.25rem; display: flex; align-items: center; gap: 8px;">
           <Icon name="lock-key" size="1.2rem" />
-          <span>Status Lemari Loker Pribadi (Dedicated RFID Lockers)</span>
+          <span>Inventaris Lemari Loker</span>
         </h3>
 
         <div class="loker-grid">
@@ -588,12 +569,13 @@ function formatTanggalSingkat(d: Date | string): string {
   <!-- ========================================================================= -->
   {currentTab === 'transaksi' && (
     <div>
-      <div class="page-header">
-        <div class="page-eyebrow">FINANCIAL AUDIT • MIDTRANS GATEWAY LEDGER</div>
-        <h1 class="page-title">Buku Besar Transaksi & Audit Gateway</h1>
-        <p class="page-subtitle">
-          Rekapitulasi pembayaran gateway Midtrans Snap, histori settlement, dan audit transaksi pelanggan.
-        </p>
+      <div class="schedule-header-bar">
+        <h1 class="page-title" style="margin: 0;">Buku Besar Transaksi</h1>
+        <div class="schedule-stat-chip">
+          <span class="schedule-stat-chip__label">TOTAL TRANSAKSI:</span>
+          <span class="schedule-stat-chip__val">{rekapPesanan.length}</span>
+          <span class="schedule-stat-chip__desc">Pesanan Tercatat</span>
+        </div>
       </div>
 
       <div class="surface-card ledger-card">
@@ -819,7 +801,8 @@ function formatTanggalSingkat(d: Date | string): string {
     flex-shrink: 0;
   }
   .overview-amount {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
     font-weight: 800;
     font-size: 0.88rem;
     color: var(--color-primary);
@@ -901,7 +884,8 @@ function formatTanggalSingkat(d: Date | string): string {
     text-align: center;
   }
   .quota-pill__count {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
     font-size: 1.15rem;
     font-weight: 800;
     color: var(--color-primary);
@@ -992,7 +976,8 @@ function formatTanggalSingkat(d: Date | string): string {
     margin-bottom: 8px;
   }
   .loker-number {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
     font-size: 1.2rem;
     font-weight: 800;
     color: var(--color-primary);
@@ -1020,8 +1005,9 @@ function formatTanggalSingkat(d: Date | string): string {
   }
   .loker-renter-exp {
     color: var(--text-subtle);
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.72rem;
   }
   .loker-available-note {
     font-size: 0.74rem;
@@ -1114,7 +1100,8 @@ function formatTanggalSingkat(d: Date | string): string {
     border-bottom: 1px solid var(--border-hairline);
   }
   .td-code {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
     font-weight: 700;
     color: var(--color-primary);
   }
@@ -1127,12 +1114,13 @@ function formatTanggalSingkat(d: Date | string): string {
     color: var(--text-muted);
   }
   .td-amount {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
     font-weight: 800;
     color: var(--text-main);
   }
   .td-method {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 0.76rem;
     color: var(--text-subtle);
   }
@@ -1144,7 +1132,8 @@ function formatTanggalSingkat(d: Date | string): string {
 
   /* UTILITY & PILL TAGS */
   .mono-val {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
   }
   .pill-tag--neutral {
     background: #FAF8F5;

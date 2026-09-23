@@ -183,12 +183,6 @@ const dashboardHome = isRoleAdmin ? '/admin' : isRolePelatih ? '/pelatih' : '/ri
             <Icon name="clock" size="0.95rem" />
             <span>{todayFormatted}</span>
           </div>
-
-          <!-- USER PILL SHORTCUT -->
-          <div class="topbar-user-pill">
-            <span class="topbar-user-initial">{user.nama_lengkap.charAt(0).toUpperCase()}</span>
-            <span class="topbar-user-name">{user.nama_lengkap.split(' ')[0]}</span>
-          </div>
         </div>
       </header>
 
@@ -247,11 +241,14 @@ const dashboardHome = isRoleAdmin ? '/admin' : isRolePelatih ? '/pelatih' : '/ri
   }
 
   .sidebar-brand {
-    padding: 1.5rem 1.5rem 1.25rem;
+    height: 64px;
+    box-sizing: border-box;
+    padding: 0 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid var(--border-hairline);
+    flex-shrink: 0;
   }
 
   .sidebar-status-pill {
@@ -462,6 +459,7 @@ const dashboardHome = isRoleAdmin ? '/admin' : isRolePelatih ? '/pelatih' : '/ri
   /* TOPBAR */
   .dashboard-topbar {
     height: 64px;
+    box-sizing: border-box;
     background: #FAF8F5;
     border-bottom: 1px solid var(--border-hairline);
     display: flex;
@@ -472,6 +470,7 @@ const dashboardHome = isRoleAdmin ? '/admin' : isRolePelatih ? '/pelatih' : '/ri
     top: 0;
     z-index: 90;
     backdrop-filter: blur(8px);
+    flex-shrink: 0;
   }
 
   .topbar-left {
@@ -524,11 +523,13 @@ const dashboardHome = isRoleAdmin ? '/admin' : isRolePelatih ? '/pelatih' : '/ri
     background: #FFF;
     border: 1px solid var(--border-hairline);
     padding: 5px 10px;
-    border-radius: var(--radius-full);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    font-weight: 700;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.7rem;
+    font-weight: 800;
     color: var(--text-muted);
+    letter-spacing: 0.04em;
   }
 
   .chip-dot {
@@ -542,41 +543,15 @@ const dashboardHome = isRoleAdmin ? '/admin' : isRolePelatih ? '/pelatih' : '/ri
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    font-family: var(--font-body);
+    font-variant-numeric: tabular-nums;
     font-size: 0.78rem;
+    font-weight: 600;
     color: var(--text-subtle);
     background: #FFF;
     border: 1px solid var(--border-hairline);
     padding: 5px 12px;
-    border-radius: var(--radius-full);
-  }
-
-  .topbar-user-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 3px 10px 3px 4px;
-    background: #FFF;
-    border: 1px solid var(--border-hairline);
-    border-radius: var(--radius-full);
-  }
-
-  .topbar-user-initial {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    color: #FFF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 0.75rem;
-  }
-
-  .topbar-user-name {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--text-main);
+    border-radius: var(--radius-sm);
   }
 
   /* WORKSPACE CONTENT */
