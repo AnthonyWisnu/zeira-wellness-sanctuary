@@ -13,145 +13,19 @@ const actionResultMbr = Astro.getActionResult(actions.pesanMembership);
 ---
 
 <SanctuaryLayout
-  title="Membership Tanpa Drama • ZEIRA SANCTUARY"
-  description="Tanpa tier rumit berjenjang, tanpa biaya tersembunyi. Akses penuh ke seluruh kelas studio, dedicated RFID locker, dan privasi suaka raga."
+  title="Paket Sanctuary Pass • ZEIRA SANCTUARY"
+  description="Pilihan durasi keanggotaan dengan akses penuh ke seluruh kelas studio, dedicated RFID locker, dan fasilitas recovery."
 >
   <main class="container">
-    <!-- PAGE HEADER -->
+    <!-- PAGE HEADER & KATALOG PASS -->
     <section class="membership-header">
       <span class="section-tag">KEANGGOTAAN SANCTUARY</span>
-      <h1 class="hero__title" style="margin-top: 0.75rem;">
-        Akses Menyeluruh. Satu Standar Kemewahan.
+      <h1 class="hero__title" style="margin-top: 0.75rem; font-size: 2.3rem;">
+        Pilih Durasi Sanctuary Pass
       </h1>
-      <p class="hero__sub" style="max-width: 720px; margin: 1rem auto 0;">
-        Di ZEIRA, tidak ada kasta kartu atau tingkatan berjenjang. Seluruh member menikmati standar privasi, ruang gerak, dan bimbingan instruktur yang setara sejak hari pertama.
+      <p class="hero__sub" style="max-width: 680px; margin: 0.75rem auto 2.5rem; font-size: 0.95rem; color: var(--text-muted);">
+        Akses tanpa batas seluruh kelas studio, dedicated RFID locker pribadi, dan hak reservasi prioritas H-30. Pilih durasi komitmen yang sesuai dengan ritme latihan Anda.
       </p>
-    </section>
-
-    <!-- SECTION: DUAL COMPARISON CARDS (NON-MEMBER VS MEMBER) -->
-    <section>
-      <div style="text-align: center; margin-bottom: 2rem;">
-        <span class="section-tag">KOMPARASI AKSES</span>
-        <h2 class="section-heading" style="font-size: 1.8rem;">Dua Cara Menikmati ZEIRA</h2>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.35rem;">
-          Pilih cara berkunjung yang paling selaras dengan rutinitas dan frekuensi latihan Anda.
-        </p>
-      </div>
-
-      <div class="comparison-grid">
-        <!-- LEFT: NON-MEMBER -->
-        <div class="comparison-card">
-          <div>
-            <div class="comparison-card__header">
-              <div>
-                <span class="comparison-card__tag">OPSI FLEKSIBEL</span>
-                <h3 class="comparison-card__title">Non-Member</h3>
-                <div class="comparison-card__sub">Bayar satuan per kelas saat ingin berkunjung</div>
-              </div>
-            </div>
-
-            <div class="comparison-price-box">
-              <div class="comparison-price-label">Tarif Satuan Per Kelas</div>
-              <div class="comparison-price-val">
-                Rp 175.000 – 420.000 <span class="comparison-price-unit">/sesi</span>
-              </div>
-            </div>
-
-            <ul class="comparison-feature-list">
-              <li class="comparison-feature-item">
-                <span class="comparison-feature-icon comparison-feature-icon--check">
-                  <Icon name="check" size="1rem" weight="bold" />
-                </span>
-                <span>Bebas pesan kelas tanpa ikatan komitmen bulanan</span>
-              </li>
-              <li class="comparison-feature-item">
-                <span class="comparison-feature-icon comparison-feature-icon--check">
-                  <Icon name="check" size="1rem" weight="bold" />
-                </span>
-                <span>Akses fasilitas studio, shower, & tea lounge saat jam sesi</span>
-              </li>
-              <li class="comparison-feature-item comparison-feature-item--dim">
-                <span class="comparison-feature-icon comparison-feature-icon--minus">
-                  <Icon name="minus" size="1rem" weight="bold" />
-                </span>
-                <span>Jendela reservasi dibuka maksimal H-7 sebelum sesi dimulai</span>
-              </li>
-              <li class="comparison-feature-item comparison-feature-item--dim">
-                <span class="comparison-feature-icon comparison-feature-icon--minus">
-                  <Icon name="minus" size="1rem" weight="bold" />
-                </span>
-                <span>Fasilitas loker harian sementara selama jam sesi berlangsung</span>
-              </li>
-            </ul>
-          </div>
-
-          <a href="/jadwal" class="btn-secondary" style="width: 100%; font-size: 0.85rem;">
-            Lihat Jadwal Kelas &rarr;
-          </a>
-        </div>
-
-        <!-- RIGHT: MEMBER -->
-        <div class="comparison-card comparison-card--featured">
-          <div>
-            <div class="comparison-card__header">
-              <div>
-                <span class="comparison-card__tag comparison-card__tag--brass">AKSES PENUH</span>
-                <h3 class="comparison-card__title">Member</h3>
-                <div class="comparison-card__sub">Akses menyeluruh tanpa batas kuota kelas bulanan</div>
-              </div>
-            </div>
-
-            <div class="comparison-price-box comparison-price-box--featured">
-              <div class="comparison-price-label" style="color: var(--color-brass-dark);">Efisiensi Investasi Maksimal</div>
-              <div class="comparison-price-val" style="color: var(--color-primary);">
-                Mulai Rp 1.050.000 <span class="comparison-price-unit">/bulan</span>
-              </div>
-            </div>
-
-            <ul class="comparison-feature-list">
-              <li class="comparison-feature-item">
-                <span class="comparison-feature-icon comparison-feature-icon--check">
-                  <Icon name="check" size="1rem" weight="bold" />
-                </span>
-                <span><strong>Akses Unlimited</strong> seluruh kelas studio (Reformer, Yoga, Sound)</span>
-              </li>
-              <li class="comparison-feature-item">
-                <span class="comparison-feature-icon comparison-feature-icon--check">
-                  <Icon name="check" size="1rem" weight="bold" />
-                </span>
-                <span><strong>Priority Window Booking H-30</strong> (amankan jadwal 1 bulan di muka)</span>
-              </li>
-              <li class="comparison-feature-item">
-                <span class="comparison-feature-icon comparison-feature-icon--check">
-                  <Icon name="check" size="1rem" weight="bold" />
-                </span>
-                <span><strong>Dedicated RFID Locker</strong> pribadi tetap selama keanggotaan aktif</span>
-              </li>
-              <li class="comparison-feature-item">
-                <span class="comparison-feature-icon comparison-feature-icon--check">
-                  <Icon name="check" size="1rem" weight="bold" />
-                </span>
-                <span><strong>Perlengkapan Higienis Lengkap</strong> & handuk katun organik setiap kedatangan</span>
-              </li>
-            </ul>
-          </div>
-
-          <a href="#katalog-durasi" class="btn-primary" style="width: 100%; font-size: 0.85rem;">
-            Pilih Durasi Membership &rarr;
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION: 4 DURATION PASSES -->
-    <section id="katalog-durasi" style="padding: 1rem 0 2.5rem;">
-      <div style="text-align: center; margin-bottom: 2.5rem;">
-        <span class="section-tag">PILIHAN KOMITMEN</span>
-        <h2 class="section-heading">Pilih Durasi Akses Sanctuary Anda</h2>
-        <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;">
-          Seluruh durasi menikmati seluruh hak istimewa Member tanpa kompromi. Komitmen lebih panjang memberikan efisiensi investasi terbaik.
-        </p>
-      </div>
 
       <div class="duration-passes-grid">
         <!-- PASS 1: 1 BULAN -->

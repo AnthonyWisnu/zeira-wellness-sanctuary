@@ -65,7 +65,7 @@ const { jadwal, kategoriList } = await JadwalService.getKatalogJadwal(isMemberAk
           return (
             <div class="surface-card class-card" style={sesi.status_kuota === 'HAMPIR_PENUH' ? 'border-color: #DFB876;' : ''}>
               
-              <!-- COL 1: WAKTU & STUDIO -->
+              <!-- COL 1: WAKTU & JADWAL -->
               <div class="class-col-time">
                 <div class="class-time-tag" style={sesi.status_kuota === 'HAMPIR_PENUH' ? 'color: #B25900;' : ''}>
                   {startStr}
@@ -77,16 +77,9 @@ const { jadwal, kategoriList } = await JadwalService.getKatalogJadwal(isMemberAk
                   </span>
                 </div>
                 <div class="class-time-sub">Durasi ~75 Menit</div>
-                <div class="class-venue-meta">
-                  <div class="class-venue-room">
-                    <Icon name="house-line" size={14} />
-                    <span>{sesi.ruangan.nama}</span>
-                  </div>
-                  <div class="class-venue-floor">{sesi.ruangan.lokasi}</div>
-                </div>
               </div>
 
-              <!-- COL 2: JUDUL, INSTRUKTUR & KUOTA -->
+              <!-- COL 2: JUDUL, INSTRUKTUR, STUDIO & KUOTA -->
               <div class="class-col-main">
                 <div>
                   <div class="class-title-row">
@@ -95,15 +88,15 @@ const { jadwal, kategoriList } = await JadwalService.getKatalogJadwal(isMemberAk
                   <h3 class="class-title" style="margin-top: 6px;">{sesi.judul_sesi}</h3>
                 </div>
 
-                <div class="class-instructor-row">
-                  <div class="trainer-avatar-sm">
-                    {sesi.pelatih.nama.charAt(0)}
+                <div class="class-meta-specs">
+                  <div class="class-meta-line">
+                    <span class="class-meta-key">Instruktur:</span>
+                    <span class="class-meta-val">{sesi.pelatih.nama}</span>
                   </div>
-                  <div class="trainer-info-sm">
-                    <span class="trainer-label-sm">Instruktur:</span>
-                    <span class="trainer-name-sm">{sesi.pelatih.nama}</span>
-                    <span class="trainer-dot">•</span>
-                    <span class="trainer-spec-sm">{sesi.pelatih.spesialisasi || 'Master Instructor'}</span>
+                  <div class="class-meta-line">
+                    <span class="class-meta-key">Ruangan:</span>
+                    <span class="class-meta-val">{sesi.ruangan.nama}</span>
+                    <span class="class-meta-sub">({sesi.ruangan.lokasi})</span>
                   </div>
                 </div>
 

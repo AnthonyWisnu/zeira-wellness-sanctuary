@@ -73,8 +73,10 @@ if (actionResultBayar?.data?.success) {
           <h1 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin: 0 0 4px;">
             {sesi.judul_sesi}
           </h1>
-          <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-            {sesi.ruangan.nama} • Bersama <strong>{sesi.pelatih.nama}</strong>
+          <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; flex-wrap: wrap;">
+            <div><span style="color: var(--text-subtle);">Instruktur:</span> <strong style="color: var(--text-main);">{sesi.pelatih.nama}</strong></div>
+            <div style="width: 1px; height: 12px; background: var(--border-hairline);"></div>
+            <div><span style="color: var(--text-subtle);">Ruangan:</span> <strong style="color: var(--text-main);">{sesi.ruangan.nama}</strong></div>
           </div>
 
           <!-- 15-MINUTE COUNTDOWN BANNER -->
@@ -101,7 +103,7 @@ if (actionResultBayar?.data?.success) {
               <strong>{new Date(sesi.waktu_mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar' }).replace('.', ':')} – {new Date(sesi.waktu_selesai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Makassar' }).replace('.', ':')} WITA</strong>
             </div>
             <div style="display: flex; justify-content: space-between;">
-              <span style="color: var(--text-muted);">Lokasi Studio:</span>
+              <span style="color: var(--text-muted);">Ruangan:</span>
               <strong>{sesi.ruangan.nama} ({sesi.ruangan.lokasi})</strong>
             </div>
             <div style="display: flex; justify-content: space-between;">
